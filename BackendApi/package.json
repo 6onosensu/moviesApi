@@ -2,7 +2,8 @@
   "dependencies": {
     "express": "^4.21.1",
     "swagger-ui-express": "^5.0.1",
-    "tall": "^8.0.0"
+    "tall": "^8.0.0",
+    "yamljs": "^0.3.0"
   },
   "name": "backendapi",
   "version": "1.0.0",
@@ -13,5 +14,8 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
+  "directories": {
+    "doc": "docs"
+  },
   "description": ""
 }
