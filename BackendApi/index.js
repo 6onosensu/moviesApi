@@ -7,7 +7,7 @@ app.get('movies', (req, res) => {
     res.send(["Harry Potter", "dfs", "sgd", "sgd",])
 })
 
-app.use('/docs', swaggerUi.serve, swaggerUI.setup(swaggerDocument))
+app.use('/docs', swaggerUI.serve, swaggerUI.setup(swaggerDocument))
 
 
 app.listen(port, () => {
