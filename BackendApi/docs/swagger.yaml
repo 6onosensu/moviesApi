@@ -1,0 +1,43 @@
+get:
+    tags:
+        - movies
+    responses:
+        '200':
+            content:
+                application/json:
+                    schema:
+                        type: array
+                        items:
+                            type: string
+                    examples:
+                        Game with details:
+                            value:
+                                id: 1
+                                name: Harry Potter and the Philosopher's Stone
+                                description: movie
+                                year: 2001
+            description: returns details of a movie by its id
+        '404':
+            content:
+                application/json:
+                    schema:
+                        $ref: '#/components/schemas/error'
+                    examples:
+                        Missing movie:
+                            value:
+                                Error: Movie not found
+            description: Movie was not found in array of movies
+    operationId: id
+    summary: Get full details of a Game
+    description: Return dull details of a given movie based on the id
+parameters:
+    -
+        examples:
+            example id:
+                value: '{1}'
+        name: id
+        description: ID of the movie
+        schema:
+            type: integer
+        in: path
+        required: true

@@ -1,10 +1,41 @@
 const app = require('express')();
 const port = 8080;
 const swaggerUI = require(`swagger-ui-express`);
-const swaggerDocument = require('./docs/swagger.json');
+const yamljs = require('yamljs')
+const swaggerDocument = yamljs.load('./docs/swagger.yaml');
+/*const swaggerDocument = require('./docs/swagger.json');*/
 
-app.get('movies', (req, res) => {
-    res.send(["Harry Potter", "dfs", "sgd", "sgd",])
+const movies = [
+    {
+        id: 1, 
+        name: "Harry Potter and the Philosopher's Stone",
+        description: "movie",
+        year: 2001,
+    }, {
+        id: 2, 
+        name: "Harry Potter and the Chamber of Secrets",
+        description: "movie",
+        year: 2002,
+    }, {
+        id: 3, 
+        name: "Harry Potter and the Prisoner of Azkaban",
+        description: "movie",
+        year: 2004,
+    }, {
+        id: 4, 
+        name: "Harry Potter and the Goblet of Fire",
+        description: "movie",
+        year: 2005,
+    },
+]
+
+app.get('/movies/:id', (req, res) => {
+    if(typeof movies[req.params.id] === 'undefined'){
+        return res.status(404).send({
+            Error: "Movie not found"
+        })
+    }
+    res.send(movies[req.params.id-1]);
 })
 
 app.use('/docs', swaggerUI.serve, swaggerUI.setup(swaggerDocument))
