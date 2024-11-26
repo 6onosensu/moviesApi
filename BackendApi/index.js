@@ -28,6 +28,10 @@ const movies = [
     },
 ]
 
+app.get('/movies', (req, res) => {
+    res.send(movies);
+})
+
 app.get('/movies/:id', (req, res) => {
     if(typeof movies[req.params.id-1] === 'undefined'){
         return res.status(404).send({
