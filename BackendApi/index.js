@@ -72,6 +72,16 @@ app.post('/movies', (req, res) => {
     .send(movie);
 })
 
+app.delete('/movies/:id', (req, res) => {
+    if (typeof movies[req.params.id - 1] === "undefined"){
+        return res.status(404).send({Error: "Movie not found"});
+    }
+
+    movies.splice(req.params.id-1, 1);
+
+    res.status(204).send({Error: "No Content"});
+})
+
 app.listen(port, () => {
     console.log(`Backend api: http://localhost:${port}`);
 });
