@@ -3,7 +3,6 @@ const port = 8080;
 const swaggerUI = require(`swagger-ui-express`);
 const yamljs = require('yamljs')
 const swaggerDocument = yamljs.load('./docs/swagger.yaml');
-/*const swaggerDocument = require('./docs/swagger.json');*/
 
 const movies = [
     {
@@ -30,10 +29,15 @@ const movies = [
 ]
 
 app.get('/movies/:id', (req, res) => {
-    if(typeof movies[req.params.id] === 'undefined'){
+    if(typeof movies[req.params.id-1] === 'undefined'){
         return res.status(404).send({
             Error: "Movie not found"
         })
+    }
+    if (typeof movies[req.params.id-1] == null){
+        return res.status(400).send({
+            Error: "invalid movie id"
+        });
     }
     res.send(movies[req.params.id-1]);
 })
