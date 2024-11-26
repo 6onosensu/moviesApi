@@ -1,8 +1,3 @@
-# moviesApi
-work in team
-
-
-
 How to run
 -npm terminal in backend project
 -type command "nodeman ."
