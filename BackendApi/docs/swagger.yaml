@@ -1,3 +1,4 @@
+description: ''
 get:
     tags:
         - movies
@@ -10,43 +11,41 @@ get:
                         items:
                             type: string
                     examples:
-                        Game with details:
+                        List of movies:
+                            value:
+                                - 'Harry Potter '
+                                - The game of thrones
+            description: Returns a list of movies
+    summary: Get a list of all movies
+    description: Returns a list of all games in API
+post:
+    requestBody:
+        content:
+            application/json:
+                schema:
+                    $ref: '#/components/schemas/Movie'
+                examples:
+                    Added Movie:
+                        value:
+                            name: Harry Potter and the Philosopher's Stone
+                            description: movie
+                            year: '2001'
+        required: true
+    tags:
+        - movies
+    responses:
+        '201':
+            content:
+                application/json:
+                    schema:
+                        $ref: '#/components/schemas/Movie'
+                    examples:
+                        Created Movie:
                             value:
                                 id: 1
                                 name: Harry Potter and the Philosopher's Stone
                                 description: movie
                                 year: 2001
-            description: returns details of a movie by its id
-        '400':
-            content:
-                application/json:
-                    schema:
-                        $ref: '#/components/schemas/error'
-                    examples:
-                        Missing id:
-                            value: '{''Error'': ''invalid movie id''}'
-            description: ID was missing
-        '404':
-            content:
-                application/json:
-                    schema:
-                        $ref: '#/components/schemas/error'
-                    examples:
-                        Missing movie:
-                            value:
-                                Error: Movie not found
-            description: Movie was not found in array of movies
-    operationId: id
-    summary: Get full details of a Game
-    description: Return dull details of a given movie based on the id
-parameters:
-    -
-        examples:
-            example id:
-                value: '{1}'
-        name: id
-        description: ID of the movie
-        schema:
-            type: integer
-        in: path
-        required: true
+            description: Added Movie
+    summary: Add a new Movie
+    description: 'Retrns the created Movie to the user, if creation is succesful'

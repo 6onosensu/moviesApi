@@ -3,6 +3,7 @@ const port = 8080;
 const swaggerUI = require(`swagger-ui-express`);
 const yamljs = require('yamljs')
 const swaggerDocument = yamljs.load('./docs/swagger.yaml');
+var express = require('express')
 
 const movies = [
     {
@@ -28,6 +29,10 @@ const movies = [
     },
 ]
 
+app.use('/docs', swaggerUI.serve, swaggerUI
+    .setup(swaggerDocument))
+app.use(express.json());
+
 app.get('/movies', (req, res) => {
     res.send(movies);
 })
@@ -35,31 +40,42 @@ app.get('/movies', (req, res) => {
 app.get('/movies/:id', (req, res) => {
     if(typeof movies[req.params.id-1] === 'undefined'){
         return res.status(404).send({
-            Error: "Movie not found"
+            error: "Movie not found"
         })
     }
     if (typeof movies[req.params.id-1] == null){
         return res.status(400).send({
-            Error: "invalid movie id"
+            error: "Invalid movie id"
         });
     }
     res.send(movies[req.params.id-1]);
 })
 
-app.post('movies', (req, res) => {
-    movies.push({
+app.post('/movies', (req, res) => {
+    if(!req.body.name ||
+        !req.body.year || 
+        !req.body.description ) {
+        return res.status(400).send({
+            error: "One or multiple parameters are missing"
+        });
+    }
+    
+    let movie = {
         id: movies.length + 1,
-        name: req.body/name,
-        description: req.body/description,
-        year: req.body/year,
-    })
-
-    res.end()
+        name: req.body.name,
+        description: req.body.description,
+        year: req.body.year,
+    }
+    movies.push(movie);
+    res.status(201)
+    .location(`${getBaseUrl(req)}/movies/${movies.length}`)
+    .send(movie);
 })
-
-app.use('/docs', swaggerUI.serve, swaggerUI.setup(swaggerDocument))
-
 
 app.listen(port, () => {
     console.log(`Backend api: http://localhost:${port}`);
 });
+
+function getBaseUrl(req) {
+    return req.connection && req.connection.encrypted ? "https" : "http" + `://${req.headers.host}`;
+}
