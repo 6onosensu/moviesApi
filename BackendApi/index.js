@@ -46,6 +46,17 @@ app.get('/movies/:id', (req, res) => {
     res.send(movies[req.params.id-1]);
 })
 
+app.post('movies', (req, res) => {
+    movies.push({
+        id: movies.length + 1,
+        name: req.body/name,
+        description: req.body/description,
+        year: req.body/year,
+    })
+
+    res.end()
+})
+
 app.use('/docs', swaggerUI.serve, swaggerUI.setup(swaggerDocument))
 
 
