@@ -17,6 +17,15 @@ get:
                                 description: movie
                                 year: 2001
             description: returns details of a movie by its id
+        '400':
+            content:
+                application/json:
+                    schema:
+                        $ref: '#/components/schemas/error'
+                    examples:
+                        Missing id:
+                            value: '{''Error'': ''invalid movie id''}'
+            description: ID was missing
         '404':
             content:
                 application/json:
