@@ -85,24 +85,41 @@ app.delete('/movies/:movieID', (req, res) => {
 const genres = [
     {
         genreID: 1,
-        Title: "Action",
+        title: "Action",
     },
     {
-        genreID: 1,
-        Title: "Drama",
+        genreID: 2,
+        title: "Drama",
     },
     {
-        genreID: 1,
-        Title: "Comedy",
+        genreID: 3,
+        title: "Comedy",
     },
     {
-        genreID: 1,
-        Title: "Horror",
+        genreID: 4,
+        title: "Horror",
     },
 ]
 
 app.get('/genres', (req, res) => {
     res.send(genres);
+})
+
+app.post('/genres', (req, res) => {
+    if(!req.body.title) {
+        return res.status(400).send({
+            error: "Title parameter is missing"
+        });
+    }
+    
+    let genre = {
+        genreIDID: genres.length + 1,
+        title: req.body.title,
+    }
+    movies.push(genre);
+    res.status(201)
+    .location(`${getBaseUrl(req)}/genres/${genres.length}`)
+    .send(genre);
 })
 
 app.listen(port, () => {

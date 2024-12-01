@@ -13,22 +13,12 @@ paths:
                     content:
                         application/json:
                             schema:
-                                type: string
+                                type: array
+                                items:
+                                    type: string
                             examples:
                                 a list of genres:
-                                    value:
-                                        -
-                                            genreID: 1
-                                            Title: Action
-                                        -
-                                            genreID: 1
-                                            Title: Drama
-                                        -
-                                            genreID: 1
-                                            Title: Comedy
-                                        -
-                                            genreID: 1
-                                            Title: Horror
+                                    value: '[ Action", "Drama", "Comedy", "Horror"]'
                     description: Returns a list of genres
                 '400':
                     content:
@@ -53,6 +43,42 @@ paths:
             operationId: getAllGenres
             summary: Get a list of all genres
             description: Returns a list of all genres available in the API
+        post:
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/Genre'
+                        examples:
+                            Genre:
+                                value:
+                                    title: Thriller
+            tags:
+                - genres
+            responses:
+                '201':
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Genre'
+                            examples:
+                                added genre:
+                                    value: "\t{\"genreID\":5,\"title\":\"Thriller\"}"
+                    description: Returned when the genre is successfully added
+                '400':
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/error'
+                            examples:
+                                missing Title:
+                                    value:
+                                        error: The 'title' field is required
+                    description: 'Returned when the request is invalid, such as empty Title field.'
+            operationId: CreateGenre
+            summary: Add a new genre
+            description: 'Returns the created genre to the user, if creation is succesful'
+
 
     /movies:
         get:
