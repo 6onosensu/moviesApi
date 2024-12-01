@@ -79,8 +79,60 @@ paths:
             summary: Add a new genre
             description: 'Returns the created genre to the user, if creation is succesful'
 
+    /genres/{id}:
+        get:
+            tags:
+                - genres
+            responses:
+                '200':
+                    content:
+                        application/json:
+                            schema:
+                                type: array
+                                items:
+                                    type: string
+                            examples:
+                                genre details:
+                                    value:
+                                        genreID: 1
+                                        title: Action
+                    description: returns details of a genre by its id
+                '400':
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/error'
+                            examples:
+                                missing genreID:
+                                    value: "\t{'Error': 'invalid genreID'}"
+                    description: Returns status code 400 to the user if genreID was missing (Bad Request)
+                '404':
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/error'
+                            examples:
+                                missing genre:
+                                    value:
+                                        error: Genre not found
+                    description: Returns status code 404 to the user if genre was not found in array of genres
+            operationId: GetGenreByID
+            summary: Get genre by genreID
+            description: Returns full details of a given genre based on the genreID
+        parameters:
+            -
+                examples:
+                    example id:
+                        value: '{1}'
+                name: id
+                description: Id of the genre
+                schema:
+                    type: integer
+                in: path
+                required: true
 
     /movies:
+        description: ''
         get:
             tags:
                 - movies
@@ -132,6 +184,7 @@ paths:
             operationId: createMovie
             summary: Add a new Movie
             description: 'Returns the created Movie to the user, if creation is succesful'
+    
     /movies/{id}:
         get:
             tags:
@@ -182,7 +235,7 @@ paths:
                                     value:
                                         Error: Movie not found
                     description: Returns status code 404 to the user if movie was not found in array of movies
-            operationId: GetMovieID
+            operationId: GetMovieByID
             summary: Get full details of a Movie
             description: Returns full details of a given movie based on the movieID
         delete:

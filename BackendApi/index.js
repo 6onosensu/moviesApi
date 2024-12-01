@@ -122,6 +122,20 @@ app.post('/genres', (req, res) => {
     .send(genre);
 })
 
+app.get('/genres/:genreID', (req, res) => {
+    if(typeof genres[req.params.genreID-1] === 'undefined'){
+        return res.status(404).send({
+            error: "Genre not found"
+        })
+    }
+    if (typeof genres[req.params.genreID-1] == null){
+        return res.status(400).send({
+            error: "Invalid genreID"
+        });
+    }
+    res.send(genres[req.params.genreID-1]);
+})
+
 app.listen(port, () => {
     console.log(`Backend api: http://localhost:${port}`);
 });
