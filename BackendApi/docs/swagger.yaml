@@ -1,92 +1,162 @@
-get:
-    tags:
-        - movies
-    responses:
-        '200':
-            content:
-                application/json:
-                    schema:
-                        type: array
-                        items:
-                            type: string
+openapi: 3.0.2
+info:
+    title: moviesApi
+    version: 1.0.0
+    description: see all the movies
+paths:
+    /movies:
+        get:
+            tags:
+                - movies
+            responses:
+                '200':
+                    content:
+                        application/json:
+                            schema:
+                                type: array
+                                items:
+                                    type: string
+                            examples:
+                                List of movies:
+                                    value:
+                                        - 'Harry Potter '
+                                        - Game of thrones
+                    description: Returns a list of movies
+            operationId: getAllMovies
+            summary: Get a list of all movies
+            description: Returns a list of all movies in API
+        post:
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/Movie'
+                        examples:
+                            Adding a movie:
+                                value:
+                                    name: Harry Potter and the Philosopher's Stone
+                                    description: movie
+                                    year: '2001'
+            tags:
+                - movies
+            responses:
+                '201':
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Movie'
+                            examples:
+                                Created Movie:
+                                    value:
+                                        movieID: 1
+                                        name: Harry Potter and the Philosopher's Stone
+                                        description: movie
+                                        year: 2001
+                    description: The movie was added successfully.
+            operationId: createMovie
+            summary: Add a new Movie
+            description: 'Returns the created Movie to the user, if creation is succesful'
+    /movies/{id}:
+        get:
+            tags:
+                - movies
+            parameters:
+                -
                     examples:
-                        Game with details:
-                            value:
-                                id: 1
-                                name: Harry Potter and the Philosopher's Stone
-                                description: movie
-                                year: 2001
-            description: returns details of a movie by its id
-        '400':
-            content:
-                application/json:
+                        Example MovieID:
+                            value: '{1}'
+                    name: id
+                    description: ID of the movie
                     schema:
-                        $ref: '#/components/schemas/error'
+                        type: integer
+                    in: path
+                    required: true
+            responses:
+                '200':
+                    content:
+                        application/json:
+                            schema:
+                                type: array
+                                items:
+                                    type: string
+                            examples:
+                                Movie with details:
+                                    value:
+                                        movieID: 1
+                                        name: Harry Potter and the Philosopher's Stone
+                                        description: movie
+                                        year: 2001
+                    description: returns details of a movie by its id
+                '400':
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/error'
+                            examples:
+                                Missing id:
+                                    value: '{''Error'': ''invalid movieID''}'
+                    description: Returns status code 400 tothe user if movieID was missing (Bad Request)
+                '404':
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/error'
+                            examples:
+                                Missing movie:
+                                    value:
+                                        Error: Movie not found
+                    description: Returns status code 404 to the user if movie was not found in array of movies
+            operationId: GetMovieID
+            summary: Get full details of a Movie
+            description: Returns full details of a given movie based on the movieID
+        delete:
+            tags:
+                - movies
+            parameters:
+                -
                     examples:
-                        Missing id:
-                            value: '{''Error'': ''invalid movie id''}'
-            description: ID was missing
-        '404':
-            content:
-                application/json:
+                        Example movieID:
+                            value: '1'
+                    name: id
+                    description: ID of the movie
                     schema:
-                        $ref: '#/components/schemas/error'
-                    examples:
-                        Missing movie:
-                            value:
-                                Error: Movie not found
-            description: Movie was not found in array of movies
-    operationId: id
-    summary: Get full details of a Game
-    description: Return dull details of a given movie based on the id
-delete:
-    tags:
-        - movies
-    parameters:
-        -
-            examples:
-                example id:
-                    value: '1'
-            name: id
-            description: ID of the movie
-            schema:
-                type: integer
-            in: path
-            required: true
-    responses:
-        '204':
-            content:
-                application/json:
-                    schema:
-                        $ref: '#/components/schemas/error'
-                    examples:
-                        example of a deleted movie:
-                            value:
-                                -
-                                    error: no content
-            description: Return status 404 to the user if deletion of the movie has been succesful
-        '404':
-            content:
-                application/json:
-                    schema:
-                        $ref: '#/components/schemas/error'
-                    examples:
-                        Missing movie:
-                            value:
-                                -
-                                    error: movie was not found
-            description: 'Return status code 404 to the user, if movie with this id does not exist'
-    operationId: id
-    summary: Delete a movie
-    description: Delete the movie by id
-parameters:
-    -
-        examples:
-            example id:
-                value: '{1}'
-        name: id
-        description: ID of the movie
-        schema:
-            type: integer
-        in: path
-        required: true
+                        type: integer
+                    in: path
+                    required: true
+            responses:
+                '204':
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/error'
+                            examples:
+                                example of a deleted movie:
+                                    value:
+                                        -
+                                            error: no content
+                    description: Return status 204 to the user if deletion of the movie has been succesful
+                '404':
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/error'
+                            examples:
+                                Missing movie:
+                                    value:
+                                        -
+                                            error: movie was not found
+                    description: 'Return status code 404 to the user, if movie with this id does not exist'
+            operationId: DeleteMovieByID
+            summary: Delete a movie
+            description: Delete the movie by id (movieID)
+        parameters:
+            -
+                examples:
+                    example id:
+                        value: '{1}'
+                name: id
+                description: ID of the movie
+                schema:
+                    type: integer
+                in: path
+                required: true
