@@ -7,22 +7,22 @@ var express = require('express')
 
 const movies = [
     {
-        id: 1, 
+        movieID: 1, 
         name: "Harry Potter and the Philosopher's Stone",
         description: "movie",
         year: 2001,
     }, {
-        id: 2, 
+        movieID: 2, 
         name: "Harry Potter and the Chamber of Secrets",
         description: "movie",
         year: 2002,
     }, {
-        id: 3, 
+        movieID: 3, 
         name: "Harry Potter and the Prisoner of Azkaban",
         description: "movie",
         year: 2004,
     }, {
-        id: 4, 
+        movieID: 4, 
         name: "Harry Potter and the Goblet of Fire",
         description: "movie",
         year: 2005,
@@ -37,18 +37,18 @@ app.get('/movies', (req, res) => {
     res.send(movies);
 })
 
-app.get('/movies/:id', (req, res) => {
-    if(typeof movies[req.params.id-1] === 'undefined'){
+app.get('/movies/:movieID', (req, res) => {
+    if(typeof movies[req.params.movieID-1] === 'undefined'){
         return res.status(404).send({
             error: "Movie not found"
         })
     }
-    if (typeof movies[req.params.id-1] == null){
+    if (typeof movies[req.params.movieID-1] == null){
         return res.status(400).send({
-            error: "Invalid movie id"
+            error: "InvalmovieID movie movieID"
         });
     }
-    res.send(movies[req.params.id-1]);
+    res.send(movies[req.params.movieID-1]);
 })
 
 app.post('/movies', (req, res) => {
@@ -61,7 +61,7 @@ app.post('/movies', (req, res) => {
     }
     
     let movie = {
-        id: movies.length + 1,
+        movieID: movies.length + 1,
         name: req.body.name,
         description: req.body.description,
         year: req.body.year,
@@ -72,12 +72,12 @@ app.post('/movies', (req, res) => {
     .send(movie);
 })
 
-app.delete('/movies/:id', (req, res) => {
-    if (typeof movies[req.params.id - 1] === "undefined"){
+app.delete('/movies/:movieID', (req, res) => {
+    if (typeof movies[req.params.movieID - 1] === "undefined"){
         return res.status(404).send({Error: "Movie not found"});
     }
 
-    movies.splice(req.params.id-1, 1);
+    movies.splice(req.params.movieID-1, 1);
 
     res.status(204).send({Error: "No Content"});
 })
