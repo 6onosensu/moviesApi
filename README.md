@@ -1,10 +1,12 @@
 How to run:
+
 • npm terminal in backend project
 • type command "nodeman ."
 • the project is running
 
 ----------------------------------
 Project team resources:
+
 • Trello: https://trello.com/b/13fXA5nM/team-project-hajusrakenduste-alused
 • Apicur: https://studio.apicur.io/apis/112948
 
