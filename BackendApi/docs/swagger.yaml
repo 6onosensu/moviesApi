@@ -4,6 +4,56 @@ info:
     version: 1.0.0
     description: see all the movies
 paths:
+    /genres:
+        get:
+            tags:
+                - genres
+            responses:
+                '200':
+                    content:
+                        application/json:
+                            schema:
+                                type: string
+                            examples:
+                                a list of genres:
+                                    value:
+                                        -
+                                            genreID: 1
+                                            Title: Action
+                                        -
+                                            genreID: 1
+                                            Title: Drama
+                                        -
+                                            genreID: 1
+                                            Title: Comedy
+                                        -
+                                            genreID: 1
+                                            Title: Horror
+                    description: Returns a list of genres
+                '400':
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/error'
+                            examples:
+                                'error ':
+                                    value:
+                                        error: Invalid request.
+                    description: return if the request contains invalid parameters
+                '500':
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/error'
+                            examples:
+                                server error:
+                                    value:
+                                        error: An unexpected error occurred. Please try again later
+                    description: Return if there’s an issue on the server-side
+            operationId: getAllGenres
+            summary: Get a list of all genres
+            description: Returns a list of all genres available in the API
+
     /movies:
         get:
             tags:

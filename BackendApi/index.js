@@ -82,6 +82,29 @@ app.delete('/movies/:movieID', (req, res) => {
     res.status(204).send({Error: "No Content"});
 })
 
+const genres = [
+    {
+        genreID: 1,
+        Title: "Action",
+    },
+    {
+        genreID: 1,
+        Title: "Drama",
+    },
+    {
+        genreID: 1,
+        Title: "Comedy",
+    },
+    {
+        genreID: 1,
+        Title: "Horror",
+    },
+]
+
+app.get('/genres', (req, res) => {
+    res.send(genres);
+})
+
 app.listen(port, () => {
     console.log(`Backend api: http://localhost:${port}`);
 });
