@@ -1,127 +1,195 @@
 const app = require('express')();
 const port = 8080;
 const swaggerUI = require(`swagger-ui-express`);
-const yamljs = require('yamljs')
+const yamljs = require('yamljs');
 const swaggerDocument = yamljs.load('./docs/swagger.yaml');
-var express = require('express')
+var express = require('express');
+
+const genres = [
+    {
+        genreID: 1,
+        title: "Adventure",
+    },
+    {
+        genreID: 2,
+        title: "Fantasy",
+    },
+    {
+        genreID: 3,
+        title: "Family",
+    },
+    {
+        genreID: 4,
+        title: "Mystery",
+    },
+    {
+        genreID: 5,
+        title: "Thriller",
+    },
+    {
+        genreID: 6,
+        title: "Drama",
+    },
+    {
+        genreID: 7,
+        title: "Action",
+    },
+    {
+        genreID: 8,
+        title: "Romance",
+    }
+]
 
 const movies = [
     {
         movieID: 1, 
         name: "Harry Potter and the Philosopher's Stone",
-        description: "movie",
+        description: "A young boy discovers he is a wizard. He begins his magical journey at Hogwarts School of Witchcraft and Wizardry.",
         year: 2001,
-    }, {
+        genres: [1, 2, 3],
+        directors: [],
+        actors: [],
+    }, 
+    {
         movieID: 2, 
         name: "Harry Potter and the Chamber of Secrets",
-        description: "movie",
+        description: "Harry returns to Hogwarts for his second year. He uncovers the truth behind a dark chamber in the school.",
         year: 2002,
-    }, {
+        genres: [1, 2, 4],
+        directors: [],
+        actors: [],
+    }, 
+    {
         movieID: 3, 
         name: "Harry Potter and the Prisoner of Azkaban",
-        description: "movie",
+        description: "Harry learns about his connection to a dangerous prisoner. He discovers more about his past and family secrets.",
         year: 2004,
-    }, {
+        genres: [1, 2, 5],
+        directors: [],
+        actors: [],
+    }, 
+    {
         movieID: 4, 
         name: "Harry Potter and the Goblet of Fire",
-        description: "movie",
+        description: "Harry is mysteriously entered into a dangerous tournament. He faces deadly challenges and the return of Voldemort.",
         year: 2005,
+        genres: [1, 2, 6],
+        directors: [],
+        actors: [],
     },
+    {
+        movieID: 5, 
+        name: "Harry Potter and the Order of the Phoenix",
+        description: "Harry forms a secret group to fight against Voldemort. He confronts the Ministry and uncovers the prophecy about him.",
+        year: 2007,
+        genres: [1, 2, 7],
+        directors: [],
+        actors: [],
+    },
+    {
+        movieID: 6, 
+        name: "Harry Potter and the Half-Blood Prince",
+        description: "Harry delves into Voldemort's past through memories. He discovers secrets about Horcruxes that can defeat him.",
+        year: 2009,
+        genres: [1, 2, 8],
+        directors: [],
+        actors: [],
+    },
+    {
+        movieID: 7, 
+        name: "Harry Potter and the Deathly Hallows: Part 1",
+        description: "Harry, Ron, and Hermione search for Horcruxes. They face betrayal, danger, and growing threats from Voldemort.",
+        year: 2010,
+        genres: [1, 2, 6],
+        directors: [],
+        actors: [],
+    },
+    {
+        movieID: 8, 
+        name: "Harry Potter and the Deathly Hallows: Part 2",
+        description: "The epic final battle between Harry and Voldemort unfolds. Hogwarts becomes the stage for the ultimate showdown.",
+        year: 2011,
+        genres: [1, 2, 7],
+        directors: [],
+        actors: [],
+    }
 ]
 
-app.use('/docs', swaggerUI.serve, swaggerUI
-    .setup(swaggerDocument))
+app.use('/docs', swaggerUI.serve, swaggerUI.setup(swaggerDocument))
 app.use(express.json());
 
-app.get('/movies', (req, res) => {
-    res.send(movies);
-})
+app.get('/movies', (req, res) => res.send(movies))
 
 app.get('/movies/:movieID', (req, res) => {
-    if(typeof movies[req.params.movieID-1] === 'undefined'){
+    const id = movies[req.params.movieID - 1];
+    if (id === undefined) {
         return res.status(404).send({
             error: "Movie not found"
         })
     }
-    if (typeof movies[req.params.movieID-1] == null){
+    if (id === null) {
         return res.status(400).send({
-            error: "InvalmovieID movie movieID"
+            error: "Invalid movieID"
         });
     }
-    res.send(movies[req.params.movieID-1]);
+    res.send(id);
 })
 
 app.post('/movies', (req, res) => {
-    if(!req.body.name ||
-        !req.body.year || 
-        !req.body.description) {
+    const { body } = req;
+
+    if(!body.name || !body.year || !body.description ||
+       !Array.isArray(body.genres) || !Array.isArray(body.directors)) {
         return res.status(400).send({
-            error: "One or multiple parameters are missing"
+            error: "One or multiple parameters are missing or invalid"
         });
     }
-    
-    let movie = {
+
+    const movie = {
         movieID: movies.length + 1,
-        name: req.body.name,
-        description: req.body.description,
-        year: req.body.year,
+        ...body, // All properties from the "body" object (name, description, year...)
     }
+    
     movies.push(movie);
-    res.status(201)
-    .location(`${getBaseUrl(req)}/movies/${movies.length}`)
-    .send(movie);
+    const link = `${getBaseUrl(req)}/movies/${movies.length}`;
+    res.status(201).location(link).send(movie);
 })
 
 app.delete('/movies/:movieID', (req, res) => {
-    if (typeof movies[req.params.movieID - 1] === "undefined"){
-        return res.status(404).send({Error: "Movie not found"});
+    const id = req.params.movieID - 1;
+    if (movies[id] === undefined) {
+        return res.status(404).send( {
+            Error: "Movie not found"
+        });
     }
 
-    movies.splice(req.params.movieID-1, 1);
-
+    movies.splice(id, 1);
     res.status(204).send({Error: "No Content"});
 })
 
 app.put('/movies/:movieID' , (req, res) => {
+    const { body } = req;
     const movie = getMovie(res, req);
-    if (!movie) {return}
-    if (!req.body.name ||
-        !req.body.year || 
-        !req.body.description) {
+    if (!movie) return;
+    if (!body.name ||
+        !body.year || 
+        !body.description || 
+        !Array.isArray(body.genres)) {
         return res.status(400).send({
-            error: "Missing movie parameters"
+            error: "Missing or invalid movie parameters"
         });
     }
-    movie.name = req.body.name;
-    movie.year = req.body.year;
-    movie.description = req.body.description;
-    return res.status(201)
-    .location(`${getBaseUrl(req)}/movies/${movie.movieID}`)
-    .send(movie);
+    movie.name = body.name;
+    movie.year = body.year;
+    movie.description = body.description;
+    movie.genres = body.genres;
+    
+    const link = `${getBaseUrl(req)}/movies/${movie.movieID}`;
+    return res.status(201).location(link).send(movie);
 })
 
-const genres = [
-    {
-        genreID: 1,
-        title: "Action",
-    },
-    {
-        genreID: 2,
-        title: "Drama",
-    },
-    {
-        genreID: 3,
-        title: "Comedy",
-    },
-    {
-        genreID: 4,
-        title: "Horror",
-    },
-]
 
-app.get('/genres', (req, res) => {
-    res.send(genres);
-})
+app.get('/genres', (req, res) => res.send(genres))
 
 app.post('/genres', (req, res) => {
     if(!req.body.title) {
@@ -135,9 +203,8 @@ app.post('/genres', (req, res) => {
         title: req.body.title,
     }
     movies.push(genre);
-    res.status(201)
-    .location(`${getBaseUrl(req)}/genres/${genres.length}`)
-    .send(genre);
+    const link = `${getBaseUrl(req)}/genres/${genres.length}`
+    res.status(201).location(link).send(genre);
 })
 
 app.get('/genres/:genreID', (req, res) => {
@@ -178,7 +245,6 @@ app.delete('/genres/:genreID', (req, res) => {
 
     res.status(204).send({Error: "No Content"});
 })
-
 
 
 app.listen(port, () => {
