@@ -131,6 +131,48 @@ paths:
                 in: path
                 required: true
 
+        delete:
+            tags:
+                - genres
+            responses:
+                '204':
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/error'
+                            examples:
+                                example of a deleted genre:
+                                    value:
+                                        error: No Content
+                    description: Returns 204 No Content to the user if deletion was successful
+                '404':
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/error'
+                            examples:
+                                error:
+                                    value:
+                                        error: Not Found
+                    description: Returns status code 404 not found if the genreID wasn't found
+            operationId: DeleteGenreByID
+            summary: Delete a genre by id
+            description: deletes a certain genre by its id
+        parameters:
+            -
+                examples:
+                    example of genre id:
+                        value:
+                            genreID: 1
+                            title: Action
+                name: id
+                description: genre id
+                schema:
+                    type: integer
+                in: path
+                required: true
+
+
     /movies:
         description: ''
         get:

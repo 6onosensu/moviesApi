@@ -136,6 +136,16 @@ app.get('/genres/:genreID', (req, res) => {
     res.send(genres[req.params.genreID-1]);
 })
 
+app.delete('/genres/:genreID', (req, res) => {
+    if (typeof genres[req.params.genreID - 1] === "undefined"){
+        return res.status(404).send({Error: "Genre not found"});
+    }
+
+    genres.splice(req.params.genreID-1, 1);
+
+    res.status(204).send({Error: "No Content"});
+})
+
 app.listen(port, () => {
     console.log(`Backend api: http://localhost:${port}`);
 });
