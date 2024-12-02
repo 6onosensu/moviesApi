@@ -158,7 +158,7 @@ paths:
             operationId: DeleteGenreByID
             summary: Delete a genre by id
             description: deletes a certain genre by its id
-        parameters:
+            parameters:
             -
                 examples:
                     example of genre id:
