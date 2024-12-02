@@ -54,7 +54,7 @@ app.get('/movies/:movieID', (req, res) => {
 app.post('/movies', (req, res) => {
     if(!req.body.name ||
         !req.body.year || 
-        !req.body.description ) {
+        !req.body.description) {
         return res.status(400).send({
             error: "One or multiple parameters are missing"
         });
@@ -80,6 +80,24 @@ app.delete('/movies/:movieID', (req, res) => {
     movies.splice(req.params.movieID-1, 1);
 
     res.status(204).send({Error: "No Content"});
+})
+
+app.put('/movies/:movieID' , (req, res) => {
+    const movie = getMovie(res, req);
+    if (!movie) {return}
+    if (!req.body.name ||
+        !req.body.year || 
+        !req.body.description) {
+        return res.status(400).send({
+            error: "Missing movie parameters"
+        });
+    }
+    movie.name = req.body.name;
+    movie.year = req.body.year;
+    movie.description = req.body.description;
+    return res.status(200)
+    .location(`${getBaseUrl(req)}/movies/${movie.movieID}`)
+    .send(movie);
 })
 
 const genres = [
@@ -152,4 +170,18 @@ app.listen(port, () => {
 
 function getBaseUrl(req) {
     return req.connection && req.connection.encrypted ? "https" : "http" + `://${req.headers.host}`;
+}
+
+function getMovie(req, res) {
+    const id = parseInt(req.params.movieID);
+    if (isNaN(id)) {
+        res.status(400).send({Error: `Movie not found`});
+        return null;
+    }
+    const movie = movies.find( movie => movie.movieID === id)
+    if (!movie) {
+        res.status(404).send({Error: `Movie not found`});
+        return null;
+    }
+    return movie;
 }
