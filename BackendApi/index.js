@@ -154,6 +154,21 @@ app.get('/genres/:genreID', (req, res) => {
     res.send(genres[req.params.genreID-1]);
 })
 
+app.put('/genres/:genreID' , (req, res) => {
+    const genre = getGenre(res, req);
+    if (!genre) {return}
+    if (!req.body.title) {
+        return res.status(400).send({
+            error: "Missing genre name"
+        });
+    }
+    genre.title = req.body.title;
+    
+    return res.status(201)
+    .location(`${getBaseUrl(req)}/genres/${genre.genreID}`)
+    .send(genre);
+})
+
 app.delete('/genres/:genreID', (req, res) => {
     if (typeof genres[req.params.genreID - 1] === "undefined"){
         return res.status(404).send({Error: "Genre not found"});
@@ -163,6 +178,8 @@ app.delete('/genres/:genreID', (req, res) => {
 
     res.status(204).send({Error: "No Content"});
 })
+
+
 
 app.listen(port, () => {
     console.log(`Backend api: http://localhost:${port}`);
@@ -184,4 +201,18 @@ function getMovie(req, res) {
         return null;
     }
     return movie;
+}
+
+function getGenre(req, res) {
+    const id = parseInt(req.params.genreID);
+    if (isNaN(id)) {
+        res.status(400).send({Error: `genreID not found`});
+        return null;
+    }
+    const genre = genres.find( genre => genre.genreID === id)
+    if (!genre) {
+        res.status(404).send({Error: `Genre not found`});
+        return null;
+    }
+    return genre;
 }

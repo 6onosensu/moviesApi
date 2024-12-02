@@ -92,11 +92,11 @@ paths:
                                 items:
                                     type: string
                             examples:
-                                genre details:
+                                genre example:
                                     value:
                                         genreID: 1
                                         title: Action
-                    description: returns details of a genre by its id
+                    description: '200 ok - returns details of a genre by its id, if the request was successful'
                 '400':
                     content:
                         application/json:
@@ -104,33 +104,71 @@ paths:
                                 $ref: '#/components/schemas/error'
                             examples:
                                 missing genreID:
-                                    value: "\t{'Error': 'invalid genreID'}"
-                    description: Returns status code 400 to the user if genreID was missing (Bad Request)
+                                    value: '{''error'': ''invalid genreID''}'
+                    description: 400 bad request - if genreID was missing
                 '404':
                     content:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/error'
                             examples:
-                                missing genre:
+                                Genre not found:
                                     value:
                                         error: Genre not found
                     description: Returns status code 404 to the user if genre was not found in array of genres
             operationId: GetGenreByID
-            summary: Get genre by genreID
-            description: Returns full details of a given genre based on the genreID
-        parameters:
-            -
-                examples:
-                    example id:
-                        value: '{1}'
-                name: id
-                description: Id of the genre
-                schema:
-                    type: integer
-                in: path
-                required: true
-
+            summary: Get a genre by its id
+            description: returns details of the genre by its id
+        put:
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            type: string
+                        examples:
+                            genre example:
+                                value:
+                                    genreID: 1
+                                    title: Action
+            tags:
+                - genres
+            responses:
+                '201':
+                    content:
+                        application/json:
+                            schema:
+                                type: array
+                                items:
+                                    type: string
+                            examples:
+                                genre was modified:
+                                    value:
+                                        genreID: 1
+                                        title: Action 2
+                    description: A genre has been successfuly modified
+                '400':
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/error'
+                            examples:
+                                missing parameters:
+                                    value:
+                                        Error: Several or one parameter is missing
+                    description: parameter was not found
+                '404':
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/error'
+                            examples:
+                                genre not found:
+                                    value:
+                                        Error: Genre not found
+                    description: Genre was not found
+            operationId: UpdateGenreByID
+            summary: Update genre by its id
+            description: Modify the details of an existing genre
         delete:
             tags:
                 - genres
@@ -158,7 +196,7 @@ paths:
             operationId: DeleteGenreByID
             summary: Delete a genre by id
             description: deletes a certain genre by its id
-            parameters:
+        parameters:
             -
                 examples:
                     example of genre id:
@@ -171,6 +209,7 @@ paths:
                     type: integer
                 in: path
                 required: true
+
 
 
     /movies:
