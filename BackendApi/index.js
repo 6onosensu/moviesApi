@@ -95,7 +95,7 @@ app.put('/movies/:movieID' , (req, res) => {
     movie.name = req.body.name;
     movie.year = req.body.year;
     movie.description = req.body.description;
-    return res.status(200)
+    return res.status(201)
     .location(`${getBaseUrl(req)}/movies/${movie.movieID}`)
     .send(movie);
 })
@@ -175,7 +175,7 @@ function getBaseUrl(req) {
 function getMovie(req, res) {
     const id = parseInt(req.params.movieID);
     if (isNaN(id)) {
-        res.status(400).send({Error: `Movie not found`});
+        res.status(400).send({Error: `id not found`});
         return null;
     }
     const movie = movies.find( movie => movie.movieID === id)

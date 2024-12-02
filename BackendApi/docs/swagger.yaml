@@ -277,9 +277,61 @@ paths:
                                     value:
                                         Error: Movie not found
                     description: Returns status code 404 to the user if movie was not found in array of movies
-            operationId: GetMovieByID
+            operationId: GetMovieID
             summary: Get full details of a Movie
             description: Returns full details of a given movie based on the movieID
+        put:
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            type: string
+                        examples:
+                            Example movie with details:
+                                value:
+                                    movieID: 1
+                                    name: Harry Potter and the Philosopher's Stone
+                                    description: movie
+                                    year: 2001
+            tags:
+                - movies
+            responses:
+                '201':
+                    content:
+                        application/json:
+                            schema:
+                                type: array
+                                items:
+                                    type: string
+                            examples:
+                                example of modified movie:
+                                    value:
+                                        movieID: 1
+                                        name: Harry Potter and the Philosopher's Stone 2
+                                        description: movie
+                                        year: 2001
+                    description: A movie has been successfuly modified
+                '400':
+                    content:
+                        application/json:
+                            examples:
+                                missing parameters:
+                                    value:
+                                        Error: Several or one parameter is missing
+                    description: parameter was not found
+                '404':
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/error'
+                            examples:
+                                example of missing movie:
+                                    value:
+                                        Error: Movie not found
+                    description: Movie was not found
+            operationId: UpdateMovieByID
+            summary: Update movie by its id
+            description: Modify the details of an existing movie
         delete:
             tags:
                 - movies
