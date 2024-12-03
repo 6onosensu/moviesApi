@@ -7,7 +7,7 @@
    nodemon .
 3. The project is now running
 
-----------------------------------
+
 ## Project team resources:
 - [Trello Board](https://trello.com/b/13fXA5nM/team-project-hajusrakenduste-alused)
 - [Apicur](https://studio.apicur.io/apis/112948)
