@@ -211,9 +211,7 @@ paths:
                 required: true
 
 
-
     /movies:
-        description: ''
         get:
             tags:
                 - movies
@@ -242,10 +240,7 @@ paths:
                             $ref: '#/components/schemas/Movie'
                         examples:
                             Adding a movie:
-                                value:
-                                    name: Harry Potter and the Philosopher's Stone
-                                    description: movie
-                                    year: '2001'
+                                value: "{\r\n    \"name\": \"Harry Potter and the Philosopher's Stone\",\r\n    \"description\": \"A young boy discovers he is a wizard. He begins his magical journey at Hogwarts School of Witchcraft and Wizardry.\",\r\n    \"year\": 2001,\r\n    \"genres\": [1, 2, 3],\r\n    \"directors\": [],\r\n    \"actors\": []\r\n  },"
             tags:
                 - movies
             responses:
@@ -256,17 +251,13 @@ paths:
                                 $ref: '#/components/schemas/Movie'
                             examples:
                                 Created Movie:
-                                    value:
-                                        movieID: 1
-                                        name: Harry Potter and the Philosopher's Stone
-                                        description: movie
-                                        year: 2001
+                                    value: "{\r\n    \"movieID\": 1,\r\n    \"name\": \"Harry Potter and the Philosopher's Stone\",\r\n    \"description\": \"A young boy discovers he is a wizard. He begins his magical journey at Hogwarts School of Witchcraft and Wizardry.\",\r\n    \"year\": 2001,\r\n    \"genres\": [1, 2, 3],\r\n    \"directors\": [],\r\n    \"actors\": []\r\n  },"
                     description: The movie was added successfully.
             operationId: createMovie
             summary: Add a new Movie
             description: 'Returns the created Movie to the user, if creation is succesful'
-    
-    /movies/{id}:
+
+    /movies/:{id}:
         get:
             tags:
                 - movies
@@ -294,8 +285,16 @@ paths:
                                     value:
                                         movieID: 1
                                         name: Harry Potter and the Philosopher's Stone
-                                        description: movie
+                                        description: >-
+                                            A young boy discovers he is a wizard. He begins his magical journey at
+                                            Hogwarts School of Witchcraft and Wizardry.
                                         year: 2001
+                                        genres:
+                                            - 1
+                                            - 2
+                                            - 3
+                                        directors: []
+                                        actors: []
                     description: returns details of a movie by its id
                 '400':
                     content:
@@ -327,11 +326,7 @@ paths:
                             type: string
                         examples:
                             Example movie with details:
-                                value:
-                                    movieID: 1
-                                    name: Harry Potter and the Philosopher's Stone
-                                    description: movie
-                                    year: 2001
+                                value: "{\r\n    \"movieID\": 1,\r\n    \"name\": \"Harry Potter and the Philosopher's Stone\",\r\n    \"description\": \"A young boy discovers he is a wizard. He begins his magical journey at Hogwarts School of Witchcraft and Wizardry.\",\r\n    \"year\": 2001,\r\n    \"genres\": [1, 2, 3],\r\n    \"directors\": [],\r\n    \"actors\": []\r\n  },"
             tags:
                 - movies
             responses:
@@ -344,15 +339,13 @@ paths:
                                     type: string
                             examples:
                                 example of modified movie:
-                                    value:
-                                        movieID: 1
-                                        name: Harry Potter and the Philosopher's Stone 2
-                                        description: movie
-                                        year: 2001
+                                    value: "{\r\n    \"movieID\": 1,\r\n    \"name\": \"Harry Potter and the Philosopher's Stone\",\r\n    \"description\": \"A young boy discovers he is a wizard. He begins his magical journey at Hogwarts School of Witchcraft and Wizardry.\",\r\n    \"year\": 2001,\r\n    \"genres\": [1, 2, 3],\r\n    \"directors\": [],\r\n    \"actors\": []\r\n  },"
                     description: A movie has been successfuly modified
                 '400':
                     content:
                         application/json:
+                            schema:
+                                $ref: '#/components/schemas/error'
                             examples:
                                 missing parameters:
                                     value:
