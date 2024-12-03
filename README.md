@@ -1,4 +1,4 @@
-#Backend
+<h1>Backend</h1>
 
 ## How to run:
 1. Open a terminal and navigate to the backend project directory
@@ -16,7 +16,7 @@
 ![image](https://github.com/user-attachments/assets/fbd1b9b4-7155-47b0-a289-d102e42966b0)
 
 ----------------------------------
-#Frontend
+<h1>Frontend</h1>
 
 - [To change style: Figma](https://www.figma.com/design/jkuh2v0DxNYOkvh75N0d5z/MoviesApi?node-id=0-1&m=dev&t=SEyg0zVolFnXNhxm-1)
 - [Prototype](https://www.figma.com/proto/jkuh2v0DxNYOkvh75N0d5z/MoviesApi?node-id=0-1&t=SEyg0zVolFnXNhxm-1)
