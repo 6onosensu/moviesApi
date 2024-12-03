@@ -18,5 +18,3 @@
 ----------------------------------
 <h1>Frontend</h1>
 
-- [To change style: Figma](https://www.figma.com/design/jkuh2v0DxNYOkvh75N0d5z/MoviesApi?node-id=0-1&m=dev&t=SEyg0zVolFnXNhxm-1)
-- [Prototype](https://www.figma.com/proto/jkuh2v0DxNYOkvh75N0d5z/MoviesApi?node-id=0-1&t=SEyg0zVolFnXNhxm-1)
