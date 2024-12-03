@@ -3,7 +3,6 @@ import HelloWorld from './components/HelloWorld.vue'
 import TheWelcome from './components/TheWelcome.vue'
 import MoviesTable from './components/MoviesTable.vue'
 import Stuff from './components/Stuff.vue'
-
 </script>
 
 <template>
