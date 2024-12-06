@@ -1,33 +1,92 @@
 {
-  "description": "",
-  "get": {
-      "tags": [
-          "movies"
-      ],
-      "responses": {
-          "200": {
+    "openapi": "3.0.2",
+    "info": {
+      "title": "Movies API",
+      "version": "1.0.0",
+      "description": "API documentation for Movies API"
+    },
+    "paths": {
+      "/movies": {
+        "get": {
+          "tags": ["movies"],
+          "summary": "Get a list of all movies",
+          "description": "Returns a list of all movies in the API",
+          "responses": {
+            "200": {
+              "description": "Returns a list of movies",
               "content": {
-                  "application/json": {
-                      "schema": {
-                          "type": "array",
-                          "items": {
-                              "type": "string"
-                          }
-                      },
-                      "examples": {
-                          "List of movies": {
-                              "value": [
-                                  "Harry Potter ",
-                                  "The game of thrones"
-                              ]
-                          }
-                      }
+                "application/json": {
+                  "schema": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "examples": {
+                    "List of movies": {
+                      "value": ["Harry Potter", "The Game of Thrones"]
+                    }
                   }
-              },
-              "description": "Returns a list of movies"
+                }
+              }
+            }
           }
+        }
       },
-      "summary": "Get a list of all movies",
-      "description": "Returns a list of all games in API"
+      "/actors/{id}": {
+        "get": {
+          "tags": ["actors"],
+          "summary": "Get details of a specific actor",
+          "description": "Returns details of an actor by their ID",
+          "parameters": [
+            {
+              "name": "id",
+              "in": "path",
+              "required": true,
+              "description": "The ID of the actor to retrieve",
+              "schema": {
+                "type": "integer"
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Success",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Actor"
+                  }
+                }
+              }
+            },
+            "404": {
+              "description": "Actor not found"
+            }
+          }
+        }
+      }
+    },
+    "components": {
+      "schemas": {
+        "Actor": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "integer"
+            },
+            "name": {
+              "type": "string"
+            },
+            "movies": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    }
   }
-}
+  
