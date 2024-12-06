@@ -65,6 +65,39 @@
             }
           }
         }
+      },
+      "/directors/{directorID}": {
+        "get": {
+          "tags": ["directors"],
+          "summary": "Get director by ID",
+          "description": "Returns a single director by their ID",
+          "parameters": [
+            {
+              "name": "directorID",
+              "in": "path",
+              "required": true,
+              "description": "The ID of the director to retrieve",
+              "schema": {
+                "type": "integer"
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Director data retrieved successfully",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Director"
+                  }
+                }
+              }
+            },
+            "404": {
+              "description": "Director not found"
+            }
+          }
+        }
       }
     },
     "components": {
@@ -85,6 +118,24 @@
               }
             }
           }
+        },
+        "Director": {
+          "type": "object",
+          "properties": {
+            "directorID": {
+              "type": "integer",
+              "example": 1
+            },
+            "name": {
+              "type": "string",
+              "example": "Steven"
+            },
+            "lastName": {
+              "type": "string",
+              "example": "Spielberg"
+            }
+          },
+          "required": ["directorID", "name", "lastName"]
         }
       }
     }
