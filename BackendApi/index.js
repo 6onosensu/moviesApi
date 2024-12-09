@@ -1,74 +1,38 @@
-const app = require('express')();
-const port = 8080;
-const swaggerUI = require(`swagger-ui-express`);
+require('dotenv').config();
+
+const express = require('express');
+const cors = require("cors")
+const swaggerUI = require('swagger-ui-express');
 const yamljs = require('yamljs');
+const { db, sync } = require("./db");
+
 const swaggerDocument = yamljs.load('./docs/swagger.yaml');
-var express = require('express');
+const app = express();
+const port = process.env.PORT || 8080;
+const host = 'localhost';
 
 const actors = [
-    {
-        actorID: 1,
-        name: "Daniel Radcliffe",
-    },
-    {
-        genreID: 2,
-        name: "Emma Watson",
-    },
-    {
-        genreID: 3,
-        name: "Rupert Grint",
-    },
-]
+    { actorID: 1, name: "Daniel Radcliffe" },
+    { actorID: 2, name: "Emma Watson" },
+    { actorID: 3, name: "Rupert Grint" },
+];
 
 const directors = [
-    {
-        directorID: 1, 
-        name: "Alfonso Cuarón",
-    }, 
-    {
-        directorID: 2, 
-        name: "Mike Newell",
-    }, 
-    {
-        directorID: 3, 
-        name: "Chris Columbus",
-    },
-]
+    { directorID: 1, name: "Alfonso Cuarón" },
+    { directorID: 2, name: "Mike Newell" },
+    { directorID: 3, name: "Chris Columbus" },
+];
 
 const genres = [
-    {
-        genreID: 1,
-        title: "Adventure",
-    },
-    {
-        genreID: 2,
-        title: "Fantasy",
-    },
-    {
-        genreID: 3,
-        title: "Family",
-    },
-    {
-        genreID: 4,
-        title: "Mystery",
-    },
-    {
-        genreID: 5,
-        title: "Thriller",
-    },
-    {
-        genreID: 6,
-        title: "Drama",
-    },
-    {
-        genreID: 7,
-        title: "Action",
-    },
-    {
-        genreID: 8,
-        title: "Romance",
-    }
-]
+    { genreID: 1, title: "Adventure" },
+    { genreID: 2, title: "Fantasy" },
+    { genreID: 3, title: "Family" },
+    { genreID: 4, title: "Mystery" },
+    { genreID: 5, title: "Thriller" },
+    { genreID: 6, title: "Drama" },
+    { genreID: 7, title: "Action" },
+    { genreID: 8, title: "Romance" },
+];
 
 const movies = [
     {
@@ -77,8 +41,8 @@ const movies = [
         description: "A young boy discovers he is a wizard. He begins his magical journey at Hogwarts School of Witchcraft and Wizardry.",
         year: 2001,
         genres: [1, 2, 3],
-        directors: [],
-        actors: [],
+        directors: [3],
+        actors: [1, 2, 3],
     }, 
     {
         movieID: 2, 
@@ -145,82 +109,22 @@ const movies = [
     }
 ]
 
-
-
-app.use('/docs', swaggerUI.serve, swaggerUI.setup(swaggerDocument))
+app.use(cors());
 app.use(express.json());
+app.use('/docs', swaggerUI.serve, swaggerUI.setup(swaggerDocument));
 
-app.get('/movies', (req, res) => res.send(movies))
+app.get('/', (req, res) => res.send(`Backend is running. Documentation is available <a href="http://${host}:${port}/docs">HERE</a>`))
 
-app.get('/movies/:movieID', (req, res) => {
-    const id = movies[req.params.movieID - 1];
-    if (id === undefined) {
-        return res.status(404).send({
-            error: "Movie not found"
-        })
+require("./routes/movieRoutes")(app);
+require('./routes/genreRoutes')(app);
+
+app.listen(port, async () => {
+    if (process.env.SYNC === 'true') {
+        await sync();
     }
-    if (id === null) {
-        return res.status(400).send({
-            error: "Invalid movieID"
-        });
-    }
-    res.send(id);
-})
-
-app.post('/movies', (req, res) => {
-    const { body } = req;
-
-    if(!body.name || !body.year || !body.description ||
-       !Array.isArray(body.genres) || !Array.isArray(body.directors)) {
-        return res.status(400).send({
-            error: "One or multiple parameters are missing or invalid"
-        });
-    }
-
-    const movie = {
-        movieID: movies.length + 1,
-        ...body, // All properties from the "body" object (name, description, year...)
-    }
-    
-    movies.push(movie);
-    const link = `${getBaseUrl(req)}/movies/${movies.length}`;
-    res.status(201).location(link).send(movie);
-})
-
-app.delete('/movies/:movieID', (req, res) => {
-    const id = req.params.movieID - 1;
-    if (movies[id] === undefined) {
-        return res.status(404).send( {
-            Error: "Movie not found"
-        });
-    }
-
-    movies.splice(id, 1);
-    res.status(204).send({Error: "No Content"});
-})
-
-app.put('/movies/:movieID' , (req, res) => {
-    const { body } = req;
-    const movie = getMovie(res, req);
-    if (!movie) return;
-    if (!body.name ||
-        !body.year || 
-        !body.description || 
-        !Array.isArray(body.genres)) {
-        return res.status(400).send({
-            error: "Missing or invalid movie parameters"
-        });
-    }
-    movie.name = body.name;
-    movie.year = body.year;
-    movie.description = body.description;
-    movie.genres = body.genres;
-    
-    const link = `${getBaseUrl(req)}/movies/${movie.movieID}`;
-    return res.status(201).location(link).send(movie);
-})
-
-
+    console.log(`Backend api running at http://${host}:${port}`);
+});
+/*
 app.get('/genres', (req, res) => res.send(genres))
 
 app.post('/genres', (req, res) => {
@@ -408,28 +312,6 @@ app.delete('/directors/:directorID', (req, res) => {
 })
 
 
-app.listen(port, () => {
-    console.log(`Backend api: http://localhost:${port}`);
-});
-
-function getBaseUrl(req) {
-    return req.connection && req.connection.encrypted ? "https" : "http" + `://${req.headers.host}`;
-}
-
-function getMovie(req, res) {
-    const id = parseInt(req.params.movieID);
-    if (isNaN(id)) {
-        res.status(400).send({Error: `id not found`});
-        return null;
-    }
-    const movie = movies.find( movie => movie.movieID === id)
-    if (!movie) {
-        res.status(404).send({Error: `Movie not found`});
-        return null;
-    }
-    return movie;
-}
-
 function getGenre(req, res) {
     const id = parseInt(req.params.genreID);
     if (isNaN(id)) {
@@ -470,4 +352,4 @@ function getDirector(req, res) {
         return null;
     }
     return director;
-}
+}*/
