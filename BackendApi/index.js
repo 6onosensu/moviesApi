@@ -224,17 +224,20 @@ app.put('/movies/:movieID' , (req, res) => {
 app.get('/genres', (req, res) => res.send(genres))
 
 app.post('/genres', (req, res) => {
-    if(!req.body.title) {
+    const { body } = req;
+
+    if(!body.title) {
         return res.status(400).send({
             error: "Title parameter is missing"
         });
     }
-    
+
     let genre = {
-        genreIDID: genres.length + 1,
-        title: req.body.title,
+        genreID: genres.length + 1,
+        title: body.title,
     }
-    movies.push(genre);
+
+    genres.push(genre);
     const link = `${getBaseUrl(req)}/genres/${genres.length}`
     res.status(201).location(link).send(genre);
 })
@@ -275,6 +278,132 @@ app.delete('/genres/:genreID', (req, res) => {
 
     genres.splice(req.params.genreID-1, 1);
 
+    res.status(204).send({Error: "No Content"});
+})
+
+
+app.get('/actors', (req, res) => res.send(actors))
+
+app.post('/actors', (req, res) => {
+    const { body } = req;
+
+    if(!body.name) {
+        return res.status(400).send({
+            error: "Name parameter is missing"
+        });
+    }
+
+    let actor = {
+        actorID: actors.length + 1,
+        name: body.name,
+    }
+    
+    actors.push(actor);
+    const link = `${getBaseUrl(req)}/actors/${actors.length}`
+    res.status(201).location(link).send(actor);
+})
+
+app.get('/actors/:actorID', (req, res) => {
+    if(typeof actors[req.params.actorID-1] === 'undefined'){
+        return res.status(404).send({
+            error: "Actor not found"
+        })
+    }
+    if (typeof actors[req.params.actorID-1] == null){
+        return res.status(400).send({
+            error: "Invalid actorID"
+        });
+    }
+    res.send(actors[req.params.actorID-1]);
+})
+
+app.put('/actors/:actorID' , (req, res) => {
+    const { body } = req;
+    const actor = getActor(res, req);
+    if (!actor) return;
+    if (!body.name) {
+        return res.status(400).send({
+            error: "Missing or invalid actor parameters"
+        });
+    }
+    actor.name = body.name;
+    
+    const link = `${getBaseUrl(req)}/actors/${actor.actorID}`;
+    return res.status(201).location(link).send(actor);
+})
+
+app.delete('/actors/:actorID', (req, res) => {
+    const id = req.params.actorID - 1;
+    if (actors[id] === undefined) {
+        return res.status(404).send( {
+            Error: "Actor not found"
+        });
+    }
+
+    actors.splice(id, 1);
+    res.status(204).send({Error: "No Content"});
+})
+
+
+app.get('/directors', (req, res) => res.send(directors))
+
+app.post('/directors', (req, res) => {
+    const { body } = req;
+
+    if(!body.name) {
+        return res.status(400).send({
+            error: "Name parameter is missing"
+        });
+    }
+
+    let director = {
+        directorID: directors.length + 1,
+        name: body.name,
+    }
+    
+    directors.push(director);
+    const link = `${getBaseUrl(req)}/directors/${directors.length}`
+    res.status(201).location(link).send(director);
+})
+
+app.get('/directors/:directorID', (req, res) => {
+    if(typeof directors[req.params.directorID-1] === 'undefined'){
+        return res.status(404).send({
+            error: "director not found"
+        })
+    }
+    if (typeof directors[req.params.directorID-1] == null){
+        return res.status(400).send({
+            error: "Invalid directorID"
+        });
+    }
+    res.send(directors[req.params.directorID-1]);
+})
+
+app.put('/directors/:directorID' , (req, res) => {
+    const { body } = req;
+    const director = getDirector(res, req);
+    if (!director) return;
+    if (!body.name) {
+        return res.status(400).send({
+            error: "Missing or invalid director parameters"
+        });
+    }
+    director.name = body.name;
+    
+    const link = `${getBaseUrl(req)}/directors/${director.directorID}`;
+    return res.status(201).location(link).send(director);
+})
+
+app.delete('/directors/:directorID', (req, res) => {
+    const id = req.params.directorID - 1;
+    if (directors[id] === undefined) {
+        return res.status(404).send( {
+            Error: "director not found"
+        });
+    }
+
+    directors.splice(id, 1);
     res.status(204).send({Error: "No Content"});
 })
 
