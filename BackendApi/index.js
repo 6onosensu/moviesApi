@@ -5,6 +5,36 @@ const yamljs = require('yamljs');
 const swaggerDocument = yamljs.load('./docs/swagger.yaml');
 var express = require('express');
 
+const actors = [
+    {
+        actorID: 1,
+        name: "Daniel Radcliffe",
+    },
+    {
+        genreID: 2,
+        name: "Emma Watson",
+    },
+    {
+        genreID: 3,
+        name: "Rupert Grint",
+    },
+]
+
+const directors = [
+    {
+        directorID: 1, 
+        name: "Alfonso Cuarón",
+    }, 
+    {
+        directorID: 2, 
+        name: "Mike Newell",
+    }, 
+    {
+        directorID: 3, 
+        name: "Chris Columbus",
+    },
+]
+
 const genres = [
     {
         genreID: 1,
@@ -114,6 +144,8 @@ const movies = [
         actors: [],
     }
 ]
+
+
 
 app.use('/docs', swaggerUI.serve, swaggerUI.setup(swaggerDocument))
 app.use(express.json());
@@ -281,4 +313,32 @@ function getGenre(req, res) {
         return null;
     }
     return genre;
+}
+
+function getActor(req, res) {
+    const id = parseInt(req.params.actorID);
+    if (isNaN(id)) {
+        res.status(400).send({Error: `actorID not found`});
+        return null;
+    }
+    const actor = actors.find( actor => actor.actorID === id)
+    if (!actor) {
+        res.status(404).send({Error: `actor not found`});
+        return null;
+    }
+    return actor;
+}
+
+function getDirector(req, res) {
+    const id = parseInt(req.params.directorID);
+    if (isNaN(id)) {
+        res.status(400).send({Error: `directorID not found`});
+        return null;
+    }
+    const director = directors.find( director => director.directorID === id)
+    if (!director) {
+        res.status(404).send({Error: `director not found`});
+        return null;
+    }
+    return director;
 }
