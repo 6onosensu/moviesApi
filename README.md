@@ -17,3 +17,4 @@
 ----------------------------------
 <h1>Frontend</h1>
 
+- [Figma] (https://www.figma.com/design/N2z3j5WIPrsrvUdiZi5GDc/Hajusrakenduste?node-id=0-1&m=dev&t=AMfZRnW8Gcet1xZO-1)
