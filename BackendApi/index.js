@@ -125,67 +125,6 @@ app.listen(port, async () => {
     console.log(`Backend api running at http://${host}:${port}`);
 });
 /*
-app.get('/genres', (req, res) => res.send(genres))
-
-app.post('/genres', (req, res) => {
-    const { body } = req;
-
-    if(!body.title) {
-        return res.status(400).send({
-            error: "Title parameter is missing"
-        });
-    }
-
-    let genre = {
-        genreID: genres.length + 1,
-        title: body.title,
-    }
-
-    genres.push(genre);
-    const link = `${getBaseUrl(req)}/genres/${genres.length}`
-    res.status(201).location(link).send(genre);
-})
-
-app.get('/genres/:genreID', (req, res) => {
-    if(typeof genres[req.params.genreID-1] === 'undefined'){
-        return res.status(404).send({
-            error: "Genre not found"
-        })
-    }
-    if (typeof genres[req.params.genreID-1] == null){
-        return res.status(400).send({
-            error: "Invalid genreID"
-        });
-    }
-    res.send(genres[req.params.genreID-1]);
-})
-
-app.put('/genres/:genreID' , (req, res) => {
-    const genre = getGenre(res, req);
-    if (!genre) {return}
-    if (!req.body.title) {
-        return res.status(400).send({
-            error: "Missing genre name"
-        });
-    }
-    genre.title = req.body.title;
-    
-    return res.status(201)
-    .location(`${getBaseUrl(req)}/genres/${genre.genreID}`)
-    .send(genre);
-})
-
-app.delete('/genres/:genreID', (req, res) => {
-    if (typeof genres[req.params.genreID - 1] === "undefined"){
-        return res.status(404).send({Error: "Genre not found"});
-    }
-
-    genres.splice(req.params.genreID-1, 1);
-
-    res.status(204).send({Error: "No Content"});
-})
-
-
 app.get('/actors', (req, res) => res.send(actors))
 
 app.post('/actors', (req, res) => {
