@@ -77,3 +77,19 @@ exports.deleteGenre = async (req, res) => {
 
     res.status(204).send();
 };
+
+/**
+function getGenre(req, res) {
+    const id = parseInt(req.params.genreID);
+    if (isNaN(id)) {
+        res.status(400).send({Error: `genreID not found`});
+        return null;
+    }
+    const genre = genres.find( genre => genre.genreID === id)
+    if (!genre) {
+        res.status(404).send({Error: `Genre not found`});
+        return null;
+    }
+    return genre;
+}
+ */
