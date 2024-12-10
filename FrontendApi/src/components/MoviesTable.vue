@@ -1,26 +1,32 @@
+<script>
+export default {
+    name: "GamesTable",
+    props: {
+        items: Array
+    }
+}
+</script>
+
 <template>
     <div>
-      <table id="moviesTable">
-        <thead>
+      <table class="table table-striped table-bordered">
+        <thead class="table-dark">
           <tr>
             <th>Movie Name</th>
             <th>Description</th>
             <th>Release Year</th>
-            <th>Genres</th>
-            <th>Director</th>
-            <th>Actors</th>
           </tr>
         </thead>
         <tbody>
-          <tr>
-            <td>Inception</td>
-            <td>A mind-bending thriller</td>
-            <td>2010</td>
-            <td>1</td>
-            <td>1</td>
-            <td>1</td>
+          <tr v-for="item in items" v-bind:key="item.id">
+            <td>{{ item.name }}</td>
+            <td>{{ item.Description }}</td>
+            <td>{{ item.Year }}</td>
           </tr>
         </tbody>
       </table>
     </div>
   </template>
+
+<style scoped>
+</style>

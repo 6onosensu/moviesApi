@@ -77,6 +77,7 @@ const movies = [
 ]
 
 exports.getAll = async (req, res) => {
+    const movies = await db.movies.findAll();
     res.status(200).send(movies.map(({movieID, name}) => ({ movieID, name })));
 }
 
