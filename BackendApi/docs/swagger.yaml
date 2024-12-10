@@ -1,32 +1,476 @@
 openapi: 3.0.2
 info:
-    title: moviesApi
+    title: MovieAPI
     version: 1.0.0
-    description: see all the movies
+    description: Movies and their descriptions
 paths:
-    /directors:
+    /movies:
+        description: ''
         get:
             tags:
-                - director
+                - movies
             responses:
                 '200':
                     content:
                         application/json:
                             schema:
                                 type: array
-                                items: {}
+                                items:
+                                    type: string
                             examples:
-                                directors:
+                                List of movies:
                                     value:
-                                        - Alfonso Cuarón
-                                        - ' Mike Newell'
-                                        - Chris Columbus
-                    description: Returns a list of directors
+                                        - 'Harry Potter '
+                                        - Game of thrones
+                    description: Returns a list of movies
+            operationId: getAllMovies
+            summary: Get a list of all movies
+            description: Returns a list of all movies in API
+        post:
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/Movie'
+                        examples:
+                            Adding a movie:
+                                value: "{\r\n    \"name\": \"Harry Potter and the Philosopher's Stone\",\r\n    \"description\": \"A young boy discovers he is a wizard. He begins his magical journey at Hogwarts School of Witchcraft and Wizardry.\",\r\n    \"year\": 2001,\r\n    \"genres\": [1, 2, 3],\r\n    \"directors\": [],\r\n    \"actors\": []\r\n  },"
+            tags:
+                - movies
+            responses:
+                '201':
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Movie'
+                            examples:
+                                Created Movie:
+                                    value: "{\r\n    \"movieID\": 1,\r\n    \"name\": \"Harry Potter and the Philosopher's Stone\",\r\n    \"description\": \"A young boy discovers he is a wizard. He begins his magical journey at Hogwarts School of Witchcraft and Wizardry.\",\r\n    \"year\": 2001,\r\n    \"genres\": [1, 2, 3],\r\n    \"directors\": [],\r\n    \"actors\": []\r\n  },"
+                    description: The movie was added successfully.
+            operationId: createMovie
+            summary: Add a new Movie
+            description: 'Returns the created Movie to the user, if creation is succesful'
+    '/movies/{id}':
+        get:
+            tags:
+                - movies
+            parameters:
+                -
+                    examples:
+                        Example MovieID:
+                            value: '1'
+                    name: id
+                    description: ID of the movie
+                    schema:
+                        type: integer
+                    in: path
+                    required: true
+            responses:
+                '200':
+                    content:
+                        application/json:
+                            schema:
+                                type: array
+                                items:
+                                    type: string
+                            examples:
+                                Movie with details:
+                                    value:
+                                        movieID: 1
+                                        name: Harry Potter and the Philosopher's Stone
+                                        description: >-
+                                            A young boy discovers he is a wizard. He begins his magical
+                                            journey at Hogwarts School of Witchcraft and Wizardry.
+                                        year: 2001
+                                        genres:
+                                            - 1
+                                            - 2
+                                            - 3
+                                        directors: []
+                                        actors: []
+                    description: returns details of a movie by its id
                 '400':
                     content:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/error'
+                            examples:
+                                Missing id:
+                                    value: '{''Error'': ''invalid movieID''}'
+                    description: Returns status code 400 tothe user if movieID was missing (Bad Request)
+                '404':
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/error'
+                            examples:
+                                Missing movie:
+                                    value:
+                                        Error: Movie not found
+                    description: Returns status code 404 to the user if movie was not found in array of movies
+            operationId: GetMovieID
+            summary: Get full details of a Movie
+            description: Returns full details of a given movie based on the movieID
+        put:
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            type: string
+                        examples:
+                            Example movie with details:
+                                value: "{\r\n    \"movieID\": 1,\r\n    \"name\": \"Harry Potter and the Philosopher's Stone\",\r\n    \"description\": \"A young boy discovers he is a wizard. He begins his magical journey at Hogwarts School of Witchcraft and Wizardry.\",\r\n    \"year\": 2001,\r\n    \"genres\": [1, 2, 3],\r\n    \"directors\": [],\r\n    \"actors\": []\r\n  },"
+            tags:
+                - movies
+            responses:
+                '201':
+                    content:
+                        application/json:
+                            schema:
+                                type: array
+                                items:
+                                    type: string
+                            examples:
+                                example of modified movie:
+                                    value: "{\r\n    \"movieID\": 1,\r\n    \"name\": \"Harry Potter and the Philosopher's Stone\",\r\n    \"description\": \"A young boy discovers he is a wizard. He begins his magical journey at Hogwarts School of Witchcraft and Wizardry.\",\r\n    \"year\": 2001,\r\n    \"genres\": [1, 2, 3],\r\n    \"directors\": [],\r\n    \"actors\": []\r\n  },"
+                    description: A movie has been successfuly modified
+                '400':
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/error'
+                            examples:
+                                missing parameters:
+                                    value:
+                                        Error: Several or one parameter is missing
+                    description: parameter was not found
+                '404':
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/error'
+                            examples:
+                                example of missing movie:
+                                    value:
+                                        Error: Movie not found
+                    description: Movie was not found
+            operationId: UpdateMovieByID
+            summary: Update movie by its id
+            description: Modify the details of an existing movie
+        delete:
+            tags:
+                - movies
+            parameters:
+                -
+                    examples:
+                        Example movieID:
+                            value: '1'
+                    name: id
+                    description: ID of the movie
+                    schema:
+                        type: integer
+                    in: path
+                    required: true
+            responses:
+                '204':
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/error'
+                            examples:
+                                example of a deleted movie:
+                                    value:
+                                        -
+                                            error: no content
+                    description: Return status 204 to the user if deletion of the movie has been succesful
+                '404':
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/error'
+                            examples:
+                                Missing movie:
+                                    value:
+                                        -
+                                            error: movie was not found
+                    description: 'Return status code 404 to the user, if movie with this id does not exist'
+            operationId: DeleteMovieByID
+            summary: Delete a movie
+            description: Delete the movie by id (movieID)
+        parameters:
+            -
+                examples:
+                    example id:
+                        value: '{1}'
+                name: id
+                description: ID of the movie
+                schema:
+                    type: integer
+                in: path
+                required: true
+    /genres:
+        get:
+            tags:
+                - genres
+            responses:
+                '200':
+                    content:
+                        application/json:
+                            schema:
+                                type: array
+                                items:
+                                    type: string
+                            examples:
+                                a list of genres:
+                                    value:
+                                        - Action
+                                        - Drama
+                                        - Comedy
+                                        - Horror
+                    description: Returns a list of genres
+                '400':
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/error'
+                            examples:
+                                'error ':
+                                    value:
+                                        error: Invalid request.
+                    description: return if the request contains invalid parameters
+                '500':
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/error'
+                            examples:
+                                server error:
+                                    value:
+                                        error: An unexpected error occurred. Please try again later
+                    description: Return if there’s an issue on the server-side
+            operationId: getAllGenres
+            summary: Get a list of all genres
+            description: Returns a list of all genres available in the API
+        post:
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/Genre'
+                        examples:
+                            Genre:
+                                value:
+                                    title: Thriller
+            tags:
+                - genres
+            responses:
+                '201':
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Genre'
+                            examples:
+                                added genre:
+                                    value: "\t{\"genreID\":5,\"title\":\"Thriller\"}"
+                    description: Returned when the genre is successfully added
+                '400':
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/error'
+                            examples:
+                                missing Title:
+                                    value:
+                                        error: The 'title' field is required
+                    description: 'Returned when the request is invalid, such as empty Title field.'
+            operationId: CreateGenre
+            summary: Add a new genre
+            description: 'Returns the created genre to the user, if creation is succesful'
+    '/genres/{id}':
+        get:
+            tags:
+                - genres
+            parameters:
+                -
+                    examples:
+                        example of genre id:
+                            value:
+                                genreID: 1
+                                title: Action
+                    name: id
+                    description: genre id
+                    schema:
+                        type: integer
+                    in: path
+                    required: true
+            responses:
+                '200':
+                    content:
+                        application/json:
+                            schema:
+                                type: array
+                                items:
+                                    type: string
+                            examples:
+                                genre example:
+                                    value:
+                                        genreID: 1
+                                        title: Action
+                    description: '200 ok - returns details of a genre by its id, if the request was successful'
+                '400':
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/error'
+                            examples:
+                                missing genreID:
+                                    value: '{''error'': ''invalid genreID''}'
+                    description: 400 bad request - if genreID was missing
+                '404':
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/error'
+                            examples:
+                                Genre not found:
+                                    value:
+                                        error: Genre not found
+                    description: Returns status code 404 to the user if genre was not found in array of genres
+            operationId: GetGenreByID
+            summary: Get a genre by its id
+            description: returns details of the genre by its id
+        put:
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            type: string
+                        examples:
+                            genre example:
+                                value:
+                                    genreID: 1
+                                    title: Action
+            tags:
+                - genres
+            parameters:
+                -
+                    examples:
+                        example of genre id:
+                            value:
+                                genreID: 1
+                                title: Action
+                    name: id
+                    description: genre id
+                    schema:
+                        type: integer
+                    in: path
+                    required: true
+            responses:
+                '201':
+                    content:
+                        application/json:
+                            schema:
+                                type: array
+                                items:
+                                    type: string
+                            examples:
+                                genre was modified:
+                                    value:
+                                        genreID: 1
+                                        title: Action 2
+                    description: A genre has been successfuly modified
+                '400':
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/error'
+                            examples:
+                                missing parameters:
+                                    value:
+                                        Error: Several or one parameter is missing
+                    description: parameter was not found
+                '404':
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/error'
+                            examples:
+                                genre not found:
+                                    value:
+                                        Error: Genre not found
+                    description: Genre was not found
+            operationId: UpdateGenreByID
+            summary: Update genre by its id
+            description: Modify the details of an existing genre
+        delete:
+            tags:
+                - genres
+            parameters:
+                -
+                    examples:
+                        example of genre id:
+                            value: '1'
+                    name: id
+                    description: genre id
+                    schema:
+                        type: integer
+                    in: path
+                    required: true
+            responses:
+                '204':
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/error'
+                            examples:
+                                example of a deleted genre:
+                                    value:
+                                        error: No Content
+                    description: Returns 204 No Content to the user if deletion was successful
+                '404':
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/error'
+                            examples:
+                                error:
+                                    value:
+                                        error: Not Found
+                    description: Returns status code 404 not found if the genreID wasn't found
+            operationId: DeleteGenreByID
+            summary: Delete a genre by id
+            description: deletes a certain genre by its id
+        parameters:
+            -
+                examples:
+                    example of genre id:
+                        value: '1'
+                name: id
+                description: genre id
+                schema:
+                    type: integer
+                in: path
+                required: true
+    /actors:
+        get:
+            tags:
+                - actors
+            responses:
+                '200':
+                    content:
+                        application/json:
+                            schema:
+                                type: integer
+                            examples:
+                                a list of actors:
+                                    value:
+                                        - Daniel Radcliffe
+                                        - Emma Watson
+                                        - Rupert Grint
+                    description: '200 ok - returns actors, if the request was successful'
+                '400':
+                    content:
+                        application/json:
                             examples:
                                 error:
                                     value:
@@ -42,45 +486,194 @@ paths:
                                     value:
                                         error: An unexpected error occurred. Please try again later
                     description: Return if there’s an issue on the server-side
-            operationId: getAllDirectors
-            summary: Get a list of all directors
-            description: Returns a list of all directors available in the API
+            operationId: GetAllActors
+            summary: Get a list of all actors
+            description: Returns a list of all actors available in the API
         post:
             requestBody:
                 content:
                     application/json:
                         schema:
-                            $ref: '#/components/schemas/Director'
+                            $ref: '#/components/schemas/Actor'
                         examples:
-                            Director:
+                            example:
                                 value:
-                                    name: David Yates
+                                    name: Matthew Lewis
             tags:
-                - directors
+                - actors
             responses:
                 '201':
                     content:
                         application/json:
                             schema:
-                                $ref: '#/components/schemas/Director'
+                                $ref: '#/components/schemas/Actor'
                             examples:
-                                example:
-                                    value: "\t{\"directorID\":4,\"name\":\" David Yates\"}"
-                    description: Returned when the director is successfully added
+                                created actor:
+                                    value:
+                                        actorID: 4
+                                        name: Matthew Lewis
+                    description: Returned when the actor is successfully added
                 '400':
                     content:
                         application/json:
                             schema:
-                                $ref: '#/components/schemas/Director'
+                                $ref: '#/components/schemas/error'
                             examples:
                                 missing name:
                                     value:
                                         error: The 'name' field is required
-                    description: 'Returned when the request is invalid, such as empty Name field.'
-            operationId: CreateDirector
-            summary: add a new director
-            description: 'Returns the created director to the user, if creation is succesful'
-    /directors/{id}:
+                    description: 'Returned when the request is invalid, such as empty Title field.'
+            operationId: CreateActor
+            summary: Add a new actor
+            description: 'Returns the created actor to the user, if creation is succesful'
+    '/actors/{id}':
+        get:
+            tags:
+                - actors
+            parameters:
+                -
+                    examples:
+                        actor id:
+                            value: '1'
+                    name: id
+                    description: ActorId
+                    schema:
+                        type: integer
+                    in: path
+                    required: true
+            responses:
+                '200':
+                    content:
+                        application/json:
+                            schema:
+                                type: integer
+                            examples:
+                                genre example:
+                                    value:
+                                        ActorID: 1
+                                        name: Tom Felton
+                    description: '200 ok - returns actors, if the request was successful'
+                '400':
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/error'
+                            examples:
+                                error:
+                                    value: '{''error'': ''invalid ActorID''}'
+                    description: 400 bad request - if ActorID was missing
+                '404':
+                    content:
+                        application/json:
+                            examples:
+                                not found:
+                                    value:
+                                        error: Actor not found
+                    description: 'Returns status code 404 to the user if actor was not found '
+            operationId: GetActorByID
+            summary: Get a actor by its id
+            description: Getting actor by id
+        put:
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            type: string
+                        examples:
+                            actor example:
+                                value:
+                                    genreID: 1
+                                    name: Tom Felton
+            tags:
+                - actors
+            responses:
+                '201':
+                    content:
+                        application/json:
+                            schema:
+                                type: array
+                                items:
+                                    type: string
+                            examples:
+                                modified actor:
+                                    value:
+                                        genreID: 1
+                                        name: Tom Felton
+                    description: An actor has been successfuly modified
+                '400':
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/error'
+                            examples:
+                                missing parameters:
+                                    value:
+                                        Error: Several or one parameter is missing
+                    description: parameter was not found
+                '404':
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/error'
+                            examples:
+                                error:
+                                    value:
+                                        Error: actor not found
+                    description: actor was not found
+            operationId: UpdateActorByID
+            summary: Update actor by its id
+            description: |
+                Modify the details of an existing actor
+        delete:
+            tags:
+                - actors
+            parameters:
+                -
+                    examples:
+                        id:
+                            value: '1'
+                    name: id
+                    description: actor id
+                    schema:
+                        type: integer
+                    in: path
+                    required: true
+            responses:
+                '204':
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/error'
+                            examples:
+                                example:
+                                    value:
+                                        error: No Content
+                    description: Returns 204 No Content to the user if deletion was successful
+                '404':
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/error'
+                            examples:
+                                example:
+                                    value:
+                                        error: Not Found
+                    description: Returns status code 404 not found if the actorID wasn't found
+            operationId: DeleteActorById
+            summary: Delete a actor by id
+            description: deletes a certain actor by its id
+        parameters:
+            -
+                examples:
+                    example of actor id:
+                        value: '1'
+                name: id
+                description: actor id
+                schema:
+                    type: integer
+                in: path
+                required: true
+    '/directors/{id}':
         get:
             tags:
                 - directors
@@ -245,27 +838,29 @@ paths:
                     type: integer
                 in: path
                 required: true
-
-    /actors:
+    /directors:
         get:
             tags:
-                - actors
+                - director
             responses:
                 '200':
                     content:
                         application/json:
                             schema:
-                                type: integer
+                                type: array
+                                items: {}
                             examples:
-                                a list of actors:
+                                directors:
                                     value:
-                                        - Daniel Radcliffe
-                                        - Emma Watson
-                                        - Rupert Grint
-                    description: '200 ok - returns actors, if the request was successful'
+                                        - Alfonso Cuarón
+                                        - ' Mike Newell'
+                                        - Chris Columbus
+                    description: Returns a list of directors
                 '400':
                     content:
                         application/json:
+                            schema:
+                                $ref: '#/components/schemas/error'
                             examples:
                                 error:
                                     value:
@@ -281,603 +876,103 @@ paths:
                                     value:
                                         error: An unexpected error occurred. Please try again later
                     description: Return if there’s an issue on the server-side
-            operationId: GetAllActors
-            summary: Get a list of all actors
-            description: Returns a list of all actors available in the API
+            operationId: getAllDirectors
+            summary: Get a list of all directors
+            description: Returns a list of all directors available in the API
         post:
             requestBody:
                 content:
                     application/json:
                         schema:
-                            $ref: '#/components/schemas/Actor'
+                            $ref: '#/components/schemas/Director'
                         examples:
-                            example:
+                            Director:
                                 value:
-                                    name: Matthew Lewis
+                                    name: David Yates
             tags:
-                - actors
+                - directors
             responses:
                 '201':
                     content:
                         application/json:
                             schema:
-                                $ref: '#/components/schemas/Actor'
+                                $ref: '#/components/schemas/Director'
                             examples:
-                                created actor:
-                                    value:
-                                        actorID: 4
-                                        name: Matthew Lewis
-                    description: Returned when the actor is successfully added
+                                example:
+                                    value: "\t{\"directorID\":4,\"name\":\" David Yates\"}"
+                    description: Returned when the director is successfully added
                 '400':
                     content:
                         application/json:
                             schema:
-                                $ref: '#/components/schemas/error'
+                                $ref: '#/components/schemas/Director'
                             examples:
                                 missing name:
                                     value:
                                         error: The 'name' field is required
-                    description: 'Returned when the request is invalid, such as empty Title field.'
-            operationId: CreateActor
-            summary: Add a new actor
-            description: 'Returns the created actor to the user, if creation is succesful'
-    /actors/{id}:
-        get:
-            tags:
-                - actors
-            parameters:
-                -
-                    examples:
-                        actor id:
-                            value: '1'
-                    name: id
-                    description: ActorId
-                    schema:
-                        type: integer
-                    in: path
-                    required: true
-            responses:
-                '200':
-                    content:
-                        application/json:
-                            schema:
-                                type: integer
-                            examples:
-                                genre example:
-                                    value:
-                                        ActorID: 1
-                                        name: Tom Felton
-                    description: '200 ok - returns actors, if the request was successful'
-                '400':
-                    content:
-                        application/json:
-                            schema:
-                                $ref: '#/components/schemas/error'
-                            examples:
-                                error:
-                                    value: '{''error'': ''invalid ActorID''}'
-                    description: 400 bad request - if ActorID was missing
-                '404':
-                    content:
-                        application/json:
-                            examples:
-                                not found:
-                                    value:
-                                        error: Actor not found
-                    description: 'Returns status code 404 to the user if actor was not found '
-            operationId: GetActorByID
-            summary: Get a actor by its id
-            description: Getting actor by id
-        put:
-            requestBody:
-                content:
-                    application/json:
-                        schema:
-                            type: string
-                        examples:
-                            actor example:
-                                value:
-                                    genreID: 1
-                                    name: Tom Felton
-            tags:
-                - actors
-            responses:
-                '201':
-                    content:
-                        application/json:
-                            schema:
-                                type: array
-                                items:
-                                    type: string
-                            examples:
-                                modified actor:
-                                    value:
-                                        genreID: 1
-                                        name: Tom Felton
-                    description: An actor has been successfuly modified
-                '400':
-                    content:
-                        application/json:
-                            schema:
-                                $ref: '#/components/schemas/error'
-                            examples:
-                                missing parameters:
-                                    value:
-                                        Error: Several or one parameter is missing
-                    description: parameter was not found
-                '404':
-                    content:
-                        application/json:
-                            schema:
-                                $ref: '#/components/schemas/error'
-                            examples:
-                                error:
-                                    value:
-                                        Error: actor not found
-                    description: actor was not found
-            operationId: UpdateActorByID
-            summary: Update actor by its id
-            description: |
-                Modify the details of an existing actor
-        delete:
-            tags:
-                - actors
-            parameters:
-                -
-                    examples:
-                        id:
-                            value: '1'
-                    name: id
-                    description: actor id
-                    schema:
-                        type: integer
-                    in: path
-                    required: true
-            responses:
-                '204':
-                    content:
-                        application/json:
-                            schema:
-                                $ref: '#/components/schemas/error'
-                            examples:
-                                example:
-                                    value:
-                                        error: No Content
-                    description: Returns 204 No Content to the user if deletion was successful
-                '404':
-                    content:
-                        application/json:
-                            schema:
-                                $ref: '#/components/schemas/error'
-                            examples:
-                                example:
-                                    value:
-                                        error: Not Found
-                    description: Returns status code 404 not found if the actorID wasn't found
-            operationId: DeleteActorById
-            summary: Delete a actor by id
-            description: deletes a certain actor by its id
-        parameters:
-            -
-                examples:
-                    example of actor id:
-                        value: '1'
-                name: id
-                description: actor id
-                schema:
+                    description: 'Returned when the request is invalid, such as empty Name field.'
+            operationId: CreateDirector
+            summary: add a new director
+            description: 'Returns the created director to the user, if creation is succesful'
+components:
+    schemas:
+        error:
+            description: |-
+                {
+                    "Error": "error message"
+                }
+            type: object
+        Movie:
+            title: Root Type for Movie
+            description: Data of Movie datatype
+            type: object
+            properties:
+                name:
+                    type: string
+                description:
+                    type: string
+                year:
+                    type: string
+            example:
+                name: Harry Potter and the Chamber of Secrets
+                description: movie
+                year: '2002'
+        Genre:
+            title: Root Type for Genre
+            description: ''
+            type: object
+            properties:
+                genreID:
+                    format: int32
                     type: integer
-                in: path
-                required: true
-
-
-    /genres:
-        get:
-            tags:
-                - genres
-            responses:
-                '200':
-                    content:
-                        application/json:
-                            schema:
-                                type: array
-                                items:
-                                    type: string
-                            examples:
-                                a list of genres:
-                                    value: '[ Action", "Drama", "Comedy", "Horror"]'
-                    description: Returns a list of genres
-                '400':
-                    content:
-                        application/json:
-                            schema:
-                                $ref: '#/components/schemas/error'
-                            examples:
-                                'error ':
-                                    value:
-                                        error: Invalid request.
-                    description: return if the request contains invalid parameters
-                '500':
-                    content:
-                        application/json:
-                            schema:
-                                $ref: '#/components/schemas/error'
-                            examples:
-                                server error:
-                                    value:
-                                        error: An unexpected error occurred. Please try again later
-                    description: Return if there’s an issue on the server-side
-            operationId: getAllGenres
-            summary: Get a list of all genres
-            description: Returns a list of all genres available in the API
-        post:
-            requestBody:
-                content:
-                    application/json:
-                        schema:
-                            $ref: '#/components/schemas/Genre'
-                        examples:
-                            Genre:
-                                value:
-                                    title: Thriller
-            tags:
-                - genres
-            responses:
-                '201':
-                    content:
-                        application/json:
-                            schema:
-                                $ref: '#/components/schemas/Genre'
-                            examples:
-                                added genre:
-                                    value: "\t{\"genreID\":5,\"title\":\"Thriller\"}"
-                    description: Returned when the genre is successfully added
-                '400':
-                    content:
-                        application/json:
-                            schema:
-                                $ref: '#/components/schemas/error'
-                            examples:
-                                missing Title:
-                                    value:
-                                        error: The 'title' field is required
-                    description: 'Returned when the request is invalid, such as empty Title field.'
-            operationId: CreateGenre
-            summary: Add a new genre
-            description: 'Returns the created genre to the user, if creation is succesful'
-
-    /genres/{id}:
-        get:
-            tags:
-                - genres
-            responses:
-                '200':
-                    content:
-                        application/json:
-                            schema:
-                                type: array
-                                items:
-                                    type: string
-                            examples:
-                                genre example:
-                                    value:
-                                        genreID: 1
-                                        title: Action
-                    description: '200 ok - returns details of a genre by its id, if the request was successful'
-                '400':
-                    content:
-                        application/json:
-                            schema:
-                                $ref: '#/components/schemas/error'
-                            examples:
-                                missing genreID:
-                                    value: '{''error'': ''invalid genreID''}'
-                    description: 400 bad request - if genreID was missing
-                '404':
-                    content:
-                        application/json:
-                            schema:
-                                $ref: '#/components/schemas/error'
-                            examples:
-                                Genre not found:
-                                    value:
-                                        error: Genre not found
-                    description: Returns status code 404 to the user if genre was not found in array of genres
-            operationId: GetGenreByID
-            summary: Get a genre by its id
-            description: returns details of the genre by its id
-        put:
-            requestBody:
-                content:
-                    application/json:
-                        schema:
-                            type: string
-                        examples:
-                            genre example:
-                                value:
-                                    genreID: 1
-                                    title: Action
-            tags:
-                - genres
-            responses:
-                '201':
-                    content:
-                        application/json:
-                            schema:
-                                type: array
-                                items:
-                                    type: string
-                            examples:
-                                genre was modified:
-                                    value:
-                                        genreID: 1
-                                        title: Action 2
-                    description: A genre has been successfuly modified
-                '400':
-                    content:
-                        application/json:
-                            schema:
-                                $ref: '#/components/schemas/error'
-                            examples:
-                                missing parameters:
-                                    value:
-                                        Error: Several or one parameter is missing
-                    description: parameter was not found
-                '404':
-                    content:
-                        application/json:
-                            schema:
-                                $ref: '#/components/schemas/error'
-                            examples:
-                                genre not found:
-                                    value:
-                                        Error: Genre not found
-                    description: Genre was not found
-            operationId: UpdateGenreByID
-            summary: Update genre by its id
-            description: Modify the details of an existing genre
-        delete:
-            tags:
-                - genres
-            responses:
-                '204':
-                    content:
-                        application/json:
-                            schema:
-                                $ref: '#/components/schemas/error'
-                            examples:
-                                example of a deleted genre:
-                                    value:
-                                        error: No Content
-                    description: Returns 204 No Content to the user if deletion was successful
-                '404':
-                    content:
-                        application/json:
-                            schema:
-                                $ref: '#/components/schemas/error'
-                            examples:
-                                error:
-                                    value:
-                                        error: Not Found
-                    description: Returns status code 404 not found if the genreID wasn't found
-            operationId: DeleteGenreByID
-            summary: Delete a genre by id
-            description: deletes a certain genre by its id
-        parameters:
-            -
-                examples:
-                    example of genre id:
-                        value:
-                            genreID: 1
-                            title: Action
-                name: id
-                description: genre id
-                schema:
+                Title:
+                    type: string
+            example:
+                genreID: 1
+                Title: Action
+        Director:
+            title: Root Type for Director
+            description: ''
+            type: object
+            properties:
+                genreID:
+                    format: int32
                     type: integer
-                in: path
-                required: true
-
-
-    /movies:
-        get:
-            tags:
-                - movies
-            responses:
-                '200':
-                    content:
-                        application/json:
-                            schema:
-                                type: array
-                                items:
-                                    type: string
-                            examples:
-                                List of movies:
-                                    value:
-                                        - 'Harry Potter '
-                                        - Game of thrones
-                    description: Returns a list of movies
-            operationId: getAllMovies
-            summary: Get a list of all movies
-            description: Returns a list of all movies in API
-        post:
-            requestBody:
-                content:
-                    application/json:
-                        schema:
-                            $ref: '#/components/schemas/Movie'
-                        examples:
-                            Adding a movie:
-                                value: "{\r\n    \"name\": \"Harry Potter and the Philosopher's Stone\",\r\n    \"description\": \"A young boy discovers he is a wizard. He begins his magical journey at Hogwarts School of Witchcraft and Wizardry.\",\r\n    \"year\": 2001,\r\n    \"genres\": [1, 2, 3],\r\n    \"directors\": [],\r\n    \"actors\": []\r\n  },"
-            tags:
-                - movies
-            responses:
-                '201':
-                    content:
-                        application/json:
-                            schema:
-                                $ref: '#/components/schemas/Movie'
-                            examples:
-                                Created Movie:
-                                    value: "{\r\n    \"movieID\": 1,\r\n    \"name\": \"Harry Potter and the Philosopher's Stone\",\r\n    \"description\": \"A young boy discovers he is a wizard. He begins his magical journey at Hogwarts School of Witchcraft and Wizardry.\",\r\n    \"year\": 2001,\r\n    \"genres\": [1, 2, 3],\r\n    \"directors\": [],\r\n    \"actors\": []\r\n  },"
-                    description: The movie was added successfully.
-            operationId: createMovie
-            summary: Add a new Movie
-            description: 'Returns the created Movie to the user, if creation is succesful'
-
-    /movies/:{id}:
-        get:
-            tags:
-                - movies
-            parameters:
-                -
-                    examples:
-                        Example MovieID:
-                            value: '1'
-                    name: id
-                    description: ID of the movie
-                    schema:
-                        type: integer
-                    in: path
-                    required: true
-            responses:
-                '200':
-                    content:
-                        application/json:
-                            schema:
-                                type: array
-                                items:
-                                    type: string
-                            examples:
-                                Movie with details:
-                                    value:
-                                        movieID: 1
-                                        name: Harry Potter and the Philosopher's Stone
-                                        description: >-
-                                            A young boy discovers he is a wizard. He begins his magical journey at
-                                            Hogwarts School of Witchcraft and Wizardry.
-                                        year: 2001
-                                        genres:
-                                            - 1
-                                            - 2
-                                            - 3
-                                        directors: []
-                                        actors: []
-                    description: returns details of a movie by its id
-                '400':
-                    content:
-                        application/json:
-                            schema:
-                                $ref: '#/components/schemas/error'
-                            examples:
-                                Missing id:
-                                    value: '{''Error'': ''invalid movieID''}'
-                    description: Returns status code 400 tothe user if movieID was missing (Bad Request)
-                '404':
-                    content:
-                        application/json:
-                            schema:
-                                $ref: '#/components/schemas/error'
-                            examples:
-                                Missing movie:
-                                    value:
-                                        Error: Movie not found
-                    description: Returns status code 404 to the user if movie was not found in array of movies
-            operationId: GetMovieID
-            summary: Get full details of a Movie
-            description: Returns full details of a given movie based on the movieID
-        put:
-            requestBody:
-                content:
-                    application/json:
-                        schema:
-                            type: string
-                        examples:
-                            Example movie with details:
-                                value: "{\r\n    \"movieID\": 1,\r\n    \"name\": \"Harry Potter and the Philosopher's Stone\",\r\n    \"description\": \"A young boy discovers he is a wizard. He begins his magical journey at Hogwarts School of Witchcraft and Wizardry.\",\r\n    \"year\": 2001,\r\n    \"genres\": [1, 2, 3],\r\n    \"directors\": [],\r\n    \"actors\": []\r\n  },"
-            tags:
-                - movies
-            responses:
-                '201':
-                    content:
-                        application/json:
-                            schema:
-                                type: array
-                                items:
-                                    type: string
-                            examples:
-                                example of modified movie:
-                                    value: "{\r\n    \"movieID\": 1,\r\n    \"name\": \"Harry Potter and the Philosopher's Stone\",\r\n    \"description\": \"A young boy discovers he is a wizard. He begins his magical journey at Hogwarts School of Witchcraft and Wizardry.\",\r\n    \"year\": 2001,\r\n    \"genres\": [1, 2, 3],\r\n    \"directors\": [],\r\n    \"actors\": []\r\n  },"
-                    description: A movie has been successfuly modified
-                '400':
-                    content:
-                        application/json:
-                            schema:
-                                $ref: '#/components/schemas/error'
-                            examples:
-                                missing parameters:
-                                    value:
-                                        Error: Several or one parameter is missing
-                    description: parameter was not found
-                '404':
-                    content:
-                        application/json:
-                            schema:
-                                $ref: '#/components/schemas/error'
-                            examples:
-                                example of missing movie:
-                                    value:
-                                        Error: Movie not found
-                    description: Movie was not found
-            operationId: UpdateMovieByID
-            summary: Update movie by its id
-            description: Modify the details of an existing movie
-        delete:
-            tags:
-                - movies
-            parameters:
-                -
-                    examples:
-                        Example movieID:
-                            value: '1'
-                    name: id
-                    description: ID of the movie
-                    schema:
-                        type: integer
-                    in: path
-                    required: true
-            responses:
-                '204':
-                    content:
-                        application/json:
-                            schema:
-                                $ref: '#/components/schemas/error'
-                            examples:
-                                example of a deleted movie:
-                                    value:
-                                        -
-                                            error: no content
-                    description: Return status 204 to the user if deletion of the movie has been succesful
-                '404':
-                    content:
-                        application/json:
-                            schema:
-                                $ref: '#/components/schemas/error'
-                            examples:
-                                Missing movie:
-                                    value:
-                                        -
-                                            error: movie was not found
-                    description: 'Return status code 404 to the user, if movie with this id does not exist'
-            operationId: DeleteMovieByID
-            summary: Delete a movie
-            description: Delete the movie by id (movieID)
-        parameters:
-            -
-                examples:
-                    example id:
-                        value: '{1}'
-                name: id
-                description: ID of the movie
-                schema:
+                name:
+                    type: string
+            example:
+                genreID: 1
+                name: David Yates
+        Actor:
+            title: Root Type for Actor
+            description: ''
+            type: object
+            properties:
+                actorID:
+                    format: int32
                     type: integer
-                in: path
-                required: true
+                name:
+                    type: string
+            example:
+                actorID: 4
+                name: Matthew Lewis
