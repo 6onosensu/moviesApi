@@ -1,84 +1,78 @@
+const {db} = require('../db');
+const Utils = require('./utils');
 
 const directors = [
     { directorID: 1, name: "Alfonso Cuarón" },
     { directorID: 2, name: "Mike Newell" },
     { directorID: 3, name: "Chris Columbus" },
 ];
-/*
 
-app.get('/directors', (req, res) => res.send(directors))
+exports.getAll = async (req, res) => {
+    res.send(directors);
+};
 
-app.post('/directors', (req, res) => {
-    const { body } = req;
-
-    if(!body.name) {
-        return res.status(400).send({
-            error: "Name parameter is missing"
-        });
+exports.getById = async (req, res) => {
+    const director = await getDirector(req, res);
+    if (!director) {
+        return res.status(404).send({ Error: 'Director not found' });
     }
+    res.send(director);
+};
 
-    let director = {
-        directorID: directors.length + 1,
-        name: body.name,
-    }
-    
-    directors.push(director);
-    const link = `${getBaseUrl(req)}/directors/${directors.length}`
-    res.status(201).location(link).send(director);
-})
-
-app.get('/directors/:directorID', (req, res) => {
-    if(typeof directors[req.params.directorID-1] === 'undefined'){
-        return res.status(404).send({
-            error: "director not found"
-        })
-    }
-    if (typeof directors[req.params.directorID-1] == null){
-        return res.status(400).send({
-            error: "Invalid directorID"
-        });
-    }
-    res.send(directors[req.params.directorID-1]);
-})
-
-app.put('/directors/:directorID' , (req, res) => {
-    const { body } = req;
-    const director = getDirector(res, req);
+exports.editById = async (req, res) => {
+    const director = await getDirector(req, res);
     if (!director) return;
-    if (!body.name) {
-        return res.status(400).send({
-            error: "Missing or invalid director parameters"
-        });
-    }
-    director.name = body.name;
-    
-    const link = `${getBaseUrl(req)}/directors/${director.directorID}`;
-    return res.status(201).location(link).send(director);
-})
 
-app.delete('/directors/:directorID', (req, res) => {
-    const id = req.params.directorID - 1;
-    if (directors[id] === undefined) {
-        return res.status(404).send( {
-            Error: "director not found"
-        });
+    const { body } = req;
+    const { name } = body;
+
+    if (!name) {
+        return res.status(400).send({ error: "Name is required" });
     }
 
-    directors.splice(id, 1);
-    res.status(204).send({Error: "No Content"});
-})
+    director.name = name;
+    await director.save();
+    const link = `${req.protocol}://${req.get("host")}/directors/${director.directorID}`;
+    return res.status(200).location(link).send(director);
+};
 
+exports.create = async (req, res) => {
+    const { body } = req;
+    const { name } = body;
 
-function getDirector(req, res) {
+    if (!name) {
+        return res.status(400).send({ 
+            error: "Director name is required", 
+        });
+    }
+
+    const newDirector = {
+        directorID: director.length + 1,
+        ...body,
+    };
+    const createdDirector = await db.directors.create(newDirector);
+    const link = `${Utils.getBaseUrl(req)}/directors/${createdDirector.directorID}`;
+    res.status(201).location(link).send(createdDirector);
+};
+
+exports.deleteById = async (req, res) => {
+    const director = await getDirector(req, res);
+    if (!director) return;
+    await director.destroy();
+    res.status(204).send({Error: 'No Content'});
+};
+
+const getDirector = async (req, res) => {
     const id = parseInt(req.params.directorID);
     if (isNaN(id)) {
-        res.status(400).send({Error: `directorID not found`});
+        res.status(400).send({Error: `ID must be a whole number: ${id}`});
         return null;
     }
-    const director = directors.find( director => director.directorID === id)
+    const director = await db.directors.findByPk(id);
     if (!director) {
-        res.status(404).send({Error: `director not found`});
+        res.status(404).send({Error: `Director with this ID not found: ${id}`});
         return null;
     }
     return director;
-}*/
+}
+

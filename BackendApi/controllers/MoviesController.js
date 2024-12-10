@@ -1,4 +1,4 @@
-const {db} = require('../db');
+const { db } = require('../db');
 const Utils = require('./utils');
 
 const movies = [
@@ -76,8 +76,7 @@ const movies = [
     }
 ]
 
-exports.getAll = 
-async (req, res) => {
+exports.getAll = async (req, res) => {
     res.status(200).send(movies.map(({movieID, name}) => ({ movieID, name })));
 }
 

@@ -72,10 +72,8 @@ exports.deleteGenre = async (req, res) => {
     const genre = await getGenre(req, res);
     if (!genre) return;
 
-    const index = genres.findIndex((g) => g.genreID === genre.genreID);
-    genres.splice(index, 1);
-
-    res.status(204).send();
+    await genre.destroy();
+    res.status(204).send({Error: 'No Content'});
 };
 
 /**

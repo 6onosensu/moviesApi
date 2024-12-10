@@ -1,83 +1,77 @@
+const { db } = require('../db');
+const Utils = require('./utils');
+
 const actors = [
     { actorID: 1, name: "Daniel Radcliffe" },
     { actorID: 2, name: "Emma Watson" },
     { actorID: 3, name: "Rupert Grint" },
 ];
 
-/*
-app.get('/actors', (req, res) => res.send(actors))
+exports.getAll = async (req, res) => {
+    res.send(actors);
+};
 
-app.post('/actors', (req, res) => {
-    const { body } = req;
-
-    if(!body.name) {
-        return res.status(400).send({
-            error: "Name parameter is missing"
-        });
+exports.getById = async (req, res) => {
+    const actor = await getActor(req, res);
+    if (!actor) {
+        return res.status(404).send({ Error: 'Actor not found' });
     }
+    res.send(actor);
+};
 
-    let actor = {
-        actorID: actors.length + 1,
-        name: body.name,
-    }
-    
-    actors.push(actor);
-    const link = `${getBaseUrl(req)}/actors/${actors.length}`
-    res.status(201).location(link).send(actor);
-})
-
-app.get('/actors/:actorID', (req, res) => {
-    if(typeof actors[req.params.actorID-1] === 'undefined'){
-        return res.status(404).send({
-            error: "Actor not found"
-        })
-    }
-    if (typeof actors[req.params.actorID-1] == null){
-        return res.status(400).send({
-            error: "Invalid actorID"
-        });
-    }
-    res.send(actors[req.params.actorID-1]);
-})
-
-app.put('/actors/:actorID' , (req, res) => {
-    const { body } = req;
-    const actor = getActor(res, req);
+exports.editById = async (req, res) => {
+    const actor = await getActor(req, res);
     if (!actor) return;
-    if (!body.name) {
-        return res.status(400).send({
-            error: "Missing or invalid actor parameters"
-        });
-    }
-    actor.name = body.name;
-    
-    const link = `${getBaseUrl(req)}/actors/${actor.actorID}`;
-    return res.status(201).location(link).send(actor);
-})
 
-app.delete('/actors/:actorID', (req, res) => {
-    const id = req.params.actorID - 1;
-    if (actors[id] === undefined) {
-        return res.status(404).send( {
-            Error: "Actor not found"
-        });
+    const { body } = req;
+    const { name } = body;
+
+    if (!name) {
+        return res.status(400).send({ error: "Name is required" });
     }
 
-    actors.splice(id, 1);
-    res.status(204).send({Error: "No Content"});
-})
+    actor.name = name;
+    await actor.save();
+    const link = `${req.protocol}://${req.get("host")}/actors/${actor.actorID}`;
+    return res.status(200).location(link).send(actor);
+};
 
-function getActor(req, res) {
+exports.create = async (req, res) => {
+    const { body } = req;
+    const { name } = body;
+
+    if (!name) {
+        return res.status(400).send({ 
+            error: "Actor name is required", 
+        });
+    }
+
+    const newActor = {
+        actorID: actors.length + 1,
+        ...body,
+    };
+    const createdActor = await db.actors.create(newActor);
+    const link = `${Utils.getBaseUrl(req)}/actors/${createdActor.actorID}`;
+    res.status(201).location(link).send(createdActor);
+};
+
+exports.deleteById = async (req, res) => {
+    const actor = await getActor(req, res);
+    if (!actor) return;
+    await actor.destroy();
+    res.status(204).send({Error: 'No Content'});
+};
+
+const getActor = async (req, res) => {
     const id = parseInt(req.params.actorID);
     if (isNaN(id)) {
-        res.status(400).send({Error: `actorID not found`});
+        res.status(400).send({Error: `ID must be a whole number: ${id}`});
         return null;
     }
-    const actor = actors.find( actor => actor.actorID === id)
+    const actor = await db.actors.findByPk(id);
     if (!actor) {
-        res.status(404).send({Error: `actor not found`});
+        res.status(404).send({Error: `Actor with this ID not found: ${id}`});
         return null;
     }
     return actor;
 }
-*/

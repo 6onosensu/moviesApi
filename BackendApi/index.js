@@ -19,6 +19,8 @@ app.get('/', (req, res) => res.send(`Backend is running. Documentation is availa
 
 require("./routes/movieRoutes")(app);
 require('./routes/genreRoutes')(app);
+require("./routes/actorRoutes")(app);
+require('./routes/directorRoutes')(app);
 
 app.listen(port, async () => {
     if (process.env.SYNC === 'true') {
