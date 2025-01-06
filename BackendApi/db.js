@@ -25,14 +25,20 @@ const db = {};
 db.Sequelize = Sequelize;
 db.sequelize = sequelize;
 
-db.movie = require("./models/Movie")(sequelize, DataTypes);
-db.users = require("./models/Genre")(sequelize, DataTypes);
-db.movie = require("./models/Actor")(sequelize, DataTypes);
-db.users = require("./models/Director")(sequelize, DataTypes);
+db.Movie = require("./models/Movie")(sequelize, DataTypes);
+db.Genre = require("./models/Genre")(sequelize, DataTypes);
+db.Actor = require("./models/Actor")(sequelize, DataTypes);
+db.Director = require("./models/Director")(sequelize, DataTypes);
+
+Object.keys(db).forEach((modelName) => {
+    if (db[modelName].associate) {
+        db[modelName].associate(db);
+    }
+});
 
 const sync = async () => {
     try {
-        await sequelize.sync({ alter: true });
+        await sequelize.sync({ force: true });
         console.log('Database is now synchronized');
     } catch (error) {
         console.error('Error synchronizing the database: ' + error);
