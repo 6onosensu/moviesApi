@@ -9,14 +9,14 @@ const sequelize = new Sequelize(
         dialect: 'mariadb',
         logging: console.log,
     }
-)
+);
 
-(async()=> {
+(async () => {
     try {
         await sequelize.authenticate();
-        console.log('Connection has been established successfully.');
+        console.log("Connection has been established successfully.");
     } catch (error) {
-        console.error('unable to connect to database' + error);
+        console.error("Unable to connect to the database:", error);
     }
 })();
 
@@ -24,14 +24,19 @@ const db = {};
 
 db.Sequelize = Sequelize;
 db.sequelize = sequelize;
-db.movie = require("./models.movie")(sequelize, DataTypes);
-db.users = require("./models.genre")(sequelize, DataTypes);
-db.movie = require("./models.actor")(sequelize, DataTypes);
-db.users = require("./models.director")(sequelize, DataTypes);
 
-const sync = (async () => {
-    await sequelize.sync({alter: true});
-    console.log('Database is now synchronized');
-});
+db.movie = require("./models/Movie")(sequelize, DataTypes);
+db.users = require("./models/Genre")(sequelize, DataTypes);
+db.movie = require("./models/Actor")(sequelize, DataTypes);
+db.users = require("./models/Director")(sequelize, DataTypes);
+
+const sync = async () => {
+    try {
+        await sequelize.sync({ alter: true });
+        console.log('Database is now synchronized');
+    } catch (error) {
+        console.error('Error synchronizing the database: ' + error);
+    }
+};
 
 module.exports = { db, sync };

@@ -1,5 +1,3 @@
-const { Sequelize, DataTypes } = require("sequelize");
-
 module.exports = (sequelize, DataTypes) => {
     const Movie = sequelize.define(
         'Movie',
@@ -11,7 +9,7 @@ module.exports = (sequelize, DataTypes) => {
             },
             name: {
                 type: DataTypes.STRING,
-                alloewNull: false
+                allowNull: false
             },
             description: {
                 type: DataTypes.TEXT,
@@ -22,16 +20,17 @@ module.exports = (sequelize, DataTypes) => {
             },
             genres: {
                 type: DataTypes.JSON,
-                alloeNull: false
+                allowNull: false
             },
             actors: {
                 type: DataTypes.JSON,
-                alloeNull: false
+                allowNull: false
             },
             directors: {
                 type: DataTypes.JSON,
-                alloeNull: false
+                allowNull: false
             },
         }
-    ) 
-}
+    );
+    return Movie;
+};

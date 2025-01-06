@@ -1,5 +1,3 @@
-const { Sequelize, DataTypes } = require("sequelize");
-
 module.exports = (sequelize, DataTypes) => {
     const Director = sequelize.define(
         'Director',
@@ -11,8 +9,9 @@ module.exports = (sequelize, DataTypes) => {
             },
             name: {
                 type: DataTypes.STRING,
-                alloewNull: false
+                allowNull: false
             },
         }
-    ) 
-}
+    );
+    return Director;
+};

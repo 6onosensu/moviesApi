@@ -8,7 +8,12 @@ const actors = [
 ];
 
 exports.getAll = async (req, res) => {
-    res.send(actors);
+    try {
+        const actors = await db.actors.findAll();
+        res.status(200).send(actors.map(({id, name}) => {return {id, name}}));
+    } catch (error) {
+        res.status(500).send({ error: "Failed to retrieve actors" });
+    }
 };
 
 exports.getById = async (req, res) => {
