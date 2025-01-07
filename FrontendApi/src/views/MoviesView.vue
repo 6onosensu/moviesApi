@@ -1,6 +1,5 @@
 <script>
 import MoviesTable from '../components/MoviesTable.vue';
-import MoviesTable from '../components/MoviesTable.vue';
 export default{
     name: "MoviesTable",
     components: { MoviesTable },

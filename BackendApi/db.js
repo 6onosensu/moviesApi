@@ -8,6 +8,16 @@ const sequelize = new Sequelize(
         host: process.env.DB_HOSTNAME,
         dialect: 'mariadb',
         logging: console.log,
+        dialectOptions: {
+            ssl: false, 
+            connectTimeout: 30000,
+          },
+          pool: {
+            max: 5,
+            min: 0,
+            idle: 10000,
+            acquire: 30000,
+          },
     }
 );
 
@@ -38,7 +48,7 @@ Object.keys(db).forEach((modelName) => {
 
 const sync = async () => {
     try {
-        await sequelize.sync({ force: true });
+        await sequelize.sync({ alter: true });
         console.log('Database is now synchronized');
     } catch (error) {
         console.error('Error synchronizing the database: ' + error);

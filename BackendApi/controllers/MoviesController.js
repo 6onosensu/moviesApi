@@ -77,9 +77,15 @@ const movies = [
 ]
 
 exports.getAll = async (req, res) => {
-    const movies = await db.movies.findAll();
-    res.status(200).send(movies.map(({movieID, name}) => ({ movieID, name })));
-}
+    try {
+        const movies = await db.movies?.findAll() || []; 
+        const formattedMovies = movies.map(({ movieID, name }) => ({ movieID, name }));
+        res.status(200).send(formattedMovies);
+    } catch (error) {
+        console.error('Error fetching movies:', error);
+        res.status(500).send({ error: 'Failed to fetch movies' });
+    }
+};
 
 exports.getById = async (req, res) => {
     const movie = await getMovie(req, res);
