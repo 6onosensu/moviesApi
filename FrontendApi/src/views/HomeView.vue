@@ -8,7 +8,7 @@ export default {
     }
   },
   async created() {
-    this.allMovies = await (await fetch('http://localhost:8080/Movies')).json()
+    this.allMovies = await (await fetch('http://localhost:8080/movies')).json()
   }
 }
 </script>
