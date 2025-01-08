@@ -1,16 +1,13 @@
 <script setup>
 import { RouterLink, RouterView } from 'vue-router'
-
-
 </script>
 
 <template>
   <header>
-    <div>
+    <div class="header-container">
       <nav>
-        <RouterLink to="/">Home</RouterLink>
-        <RouterLink to="/movies">Movies</RouterLink>
-        <RouterLink to="/about">About</RouterLink>
+        <RouterLink to="/" class="nav-link">Home</RouterLink>
+        <RouterLink to="/movies" class="nav-link">Movies</RouterLink>
       </nav>
     </div>
   </header>
@@ -18,30 +15,31 @@ import { RouterLink, RouterView } from 'vue-router'
 </template>
 
 <style scoped>
-header {
-  line-height: 1.5;
+.header-container {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center; 
+  padding: 10px 20px;
+  border-bottom: 1px solid #ddd;
 }
 
-.logo {
-  display: block;
-  margin: 0 auto 2rem;
+nav {
+  display: flex;
+  gap: 15px; 
 }
 
-@media (min-width: 1024px) {
-  header {
-    display: flex;
-    place-items: center;
-    padding-right: calc(var(--section-gap) / 2);
-  }
-
-  .logo {
-    margin: 0 2rem 0 0;
-  }
-
-  header .wrapper {
-    display: flex;
-    place-items: flex-start;
-    flex-wrap: wrap;
-  }
+.nav-link {
+  text-decoration: none;
+  color: #007bff;
+  font-size: 1rem; 
+  font-weight: 500; 
+  padding: 5px 10px;
+  border-radius: 5px; 
+  transition: background-color 0.3s, color 0.3s; 
 }
+
+.nav-link:hover {
+  background-color: #007bff;
+  color: white;
+  }
 </style>

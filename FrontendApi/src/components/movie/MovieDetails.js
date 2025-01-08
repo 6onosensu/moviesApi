@@ -1,31 +1,32 @@
 export default {
+    name: "MovieDetailsTable",
+    props: ["movieInModal"],
     template: `
-    <table class="table table-striped">
+      <table class="table table-striped">
         <tr>
-            <th>Id</th>
-            <th>{{movieInModal.movieID}}</th>
+          <th>Id</th>
+          <td>{{ movieInModal.movieID }}</td>
         </tr>
         <tr>
-            <th>Name</th>
-            <th>{{movieInModal.description}}</th>
+          <th>Description</th>
+          <td>{{ movieInModal.description }}</td>
         </tr>
         <tr>
-            <th>Name</th>
-            <th>{{movieInModal.year}}</th>
+          <th>Year</th>
+          <td>{{ movieInModal.year }}</td>
         </tr>
         <tr>
-            <th>Name</th>
-            <th>{{movieInModal.genres}}</th>
+          <th>Genres</th>
+          <td>{{ movieInModal.genres.join(', ') }}</td>
         </tr>
         <tr>
-            <th>Name</th>
-            <th>{{movieInModal.directors}}</th>
+          <th>Directors</th>
+          <td>{{ movieInModal.directors.join(', ') }}</td>
         </tr>
         <tr>
-            <th>Name</th>
-            <th>{{movieInModal.actors}}</th>
+          <th>Actors</th>
+          <td>{{ movieInModal.actors.join(', ') }}</td>
         </tr>
-    </table>
+      </table>
     `,
-    props: ["movieInModal"]
-}
+  };

@@ -1,22 +1,24 @@
 <script>
 import MoviesTable from '../components/MoviesTable.vue';
-export default{
-    name: "MoviesTable",
-    components: { MoviesTable },
-    data() {
-        return {
-            allMovies: []
-        }
-    },
-    async created() {
-        this.allMovies = await (await fetch('http://localhost:8080/movies')).json();
-    }
-}
+export default {
+  name: "MoviesView",
+  components: { MoviesTable },
+  data() {
+    return {
+      allMovies: [],
+    };
+  },
+  async created() {
+    this.allMovies = await (await fetch('http://localhost:8080/movies')).json();
+  },
+};
 </script>
 
 <template>
     <main>
-        <MoviesTable :items=allMovies />
+        <router-link to="/add-movie" class="btn btn-primary">Add Movie</router-link>
+        <div v-if="allMovies.length === 0">Loading movies...</div>
+        <MoviesTable v-else :items="allMovies" />
     </main>
 </template>
 
