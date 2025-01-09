@@ -25,7 +25,13 @@ export default {
           <td>{{ item.year }}</td>
           <td>
             <router-link :to="`/movies/${item.movieID}`" class="btn">
-              View Details
+              Details
+            </router-link>
+            <router-link :to="`/movies/${item.movieID}/edit`" class="btn">
+              Update
+            </router-link>
+            <router-link :to="`/movies/${item.movieID}/delete`" class="btn">
+              Delete
             </router-link>
           </td>
         </tr>
@@ -71,16 +77,17 @@ export default {
 }
 
 .btn {
-  padding: 8px 12px;
-  background-color: #007bff;
-  color: white;
+  display: block;
   text-decoration: none;
-  border-radius: 4px;
   font-size: 14px;
-  transition: background-color 0.3s ease-in-out;
+  border: none;
+  background: none;
+  color: #007bff;
+  cursor: pointer;
 }
 
 .btn:hover {
-  background-color: #0056b3;
+  text-decoration: underline;
+  color: #0056b3;
 }
 </style>

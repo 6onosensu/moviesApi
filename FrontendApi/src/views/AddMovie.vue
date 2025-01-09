@@ -53,7 +53,7 @@
       </ul>
     </div>
 
-    <button @click="submitMovie">Submit</button>
+    <button class="submitBtn" @click="submitMovie">Submit</button>
   </div>
 </template>
 
@@ -131,6 +131,7 @@ export default {
 
 <style scoped>
 .add-movie-form {
+  min-width: 500px;
   font-family: Arial, sans-serif;
   margin: 20px;
 }
@@ -154,17 +155,35 @@ select {
 }
 
 button {
-  margin-top: 10px;
-  padding: 10px 20px;
+  display: block;
+  margin: 5px auto;
+  text-decoration: underline;
+  font-size: 14px;
+  border: none;
+  background: none;
+  color: #007bff;
+  cursor: pointer;
+}
+
+button:hover {
+  color: #0056b3;
+  text-decoration: none;
+}
+
+.submitBtn {
+  margin-top: 40px;
+  padding: 5px 10px;
   background-color: #007bff;
+  text-decoration: none;
   color: white;
   border: none;
   border-radius: 4px;
   cursor: pointer;
 }
-
-button:hover {
+.submitBtn:hover {
+  color: white;
   background-color: #0056b3;
+  text-decoration: none;
 }
 
 ul {

@@ -122,54 +122,99 @@ exports.create = async (req, res) => {
 };
 
 exports.editById = async (req, res) => {
-    const movie = await getMovie(req, res);
-    if (!movie) return;
+    try {
+        const movieID = parseInt(req.params.movieID);
+        if (isNaN(movieID)) {
+            return res.status(400).send({ error: "Invalid movie ID" });
+        }
 
-    const { body } = req;
-    const { name, year, description, genres, directors, actors } = body;
+        const movie = await db.Movie.findByPk(movieID, {
+            include: [
+                { model: db.Genre, through: { attributes: [] } },
+                { model: db.Actor, through: { attributes: [] } },
+                { model: db.Director, through: { attributes: [] } },
+            ],
+        });
 
-    if (!name || !year || !description || 
-        !Array.isArray(genres) || 
-        !Array.isArray(directors) || 
-        !Array.isArray(actors)) {
-        return res.status(400).send({ error: 'Invalid or missing parameters' });
+        if (!movie) {
+            return res.status(404).send({ error: "Movie not found" });
+        }
+
+        const { name, year, description, genres, actors, directors } = req.body;
+
+        if (!name || !year || !description ||
+            !Array.isArray(genres) ||
+            !Array.isArray(actors) ||
+            !Array.isArray(directors)) {
+            return res.status(400).send({ error: 'Invalid or missing parameters' });
+        }
+
+        movie.name = name;
+        movie.year = year;
+        movie.description = description;
+        await movie.save();
+
+        if (genres) {
+            const genreRecords = await Promise.all(
+                genres.map(async (genre) =>
+                    await db.Genre.findOrCreate({ where: { title: genre.title } })
+                )
+            );
+            const genresToLink = genreRecords.map(([genreRecord]) => genreRecord);
+            await movie.setGenres(genresToLink);
+        }
+
+        if (actors) {
+            const actorRecords = await Promise.all(
+                actors.map(async (actor) =>
+                    await db.Actor.findOrCreate({ where: { name: actor.name } })
+                )
+            );
+            const actorsToLink = actorRecords.map(([actorRecord]) => actorRecord);
+            await movie.setActors(actorsToLink);
+        }
+
+        if (directors) {
+            const directorRecords = await Promise.all(
+                directors.map(async (director) =>
+                    await db.Director.findOrCreate({ where: { name: director.name } })
+                )
+            );
+            const directorsToLink = directorRecords.map(([directorRecord]) => directorRecord);
+            await movie.setDirectors(directorsToLink);
+        }
+
+        const updatedMovie = await db.Movie.findByPk(movieID, {
+            include: [
+                { model: db.Genre, through: { attributes: [] } },
+                { model: db.Actor, through: { attributes: [] } },
+                { model: db.Director, through: { attributes: [] } },
+            ],
+        });
+
+        return res.status(200).send(updatedMovie);
+    } catch (error) {
+        console.error("Error updating movie:", error);
+        res.status(500).send({ error: "Failed to update movie" });
     }
-
-    movie.name = name;
-    movie.year = year;
-    movie.description = description;
-    movie.genres = genres;
-    movie.directors = directors;
-    movie.actors = actors;
-
-    await movie.save();
-    const link = `${Utils.getBaseUrl(req)}/movies/${movie.movieID}`;
-    return res.status(200).location(link).send(movie);
 }
 
 exports.deleteById = async (req, res) => {
-    const movie = await getMovie(req, res);
-    if ( !movie ) { return }
-    await movie.destroy();
-    res.status(204).send({Error: 'No Content'});
-}
-
-const getMovie = async (req, res) => {
-    const id = parseInt(req.params.movieID);
-    if(isNaN(id)) {
-        res.status(400).send({Error: `ID must be a whole number: ${id}`});
-        return null;
-    }
     try {
-        const movie = await db.Movie.findByPk(id);
-        if(!movie) {
-            res.status(404).send({Error: `movie with this id not found: ${id}`});
-            return null;
+        const movieID = parseInt(req.params.movieID);
+        if (isNaN(movieID)) {
+            return res.status(400).send({ error: "Invalid movie ID" });
         }
-        return movie;
+
+        const movie = await db.Movie.findByPk(movieID);
+        if (!movie) {
+            return res.status(404).send({ error: "Movie not found" });
+        }
+
+        await movie.destroy();
+        res.status(204).send();
     } catch (error) {
-        console.error('Error fetching movie by ID:', error);
-        res.status(500).send({ error: 'Failed to fetch movie' });
-        return null;
+        console.error("Error deleting movie:", error);
+        res.status(500).send({ error: "Failed to delete movie" });
     }
 }
