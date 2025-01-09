@@ -76,26 +76,50 @@ exports.getById = async (req, res) => {
 
 
 exports.create = async (req, res) => {
-    const { body } = req;
-    const { name, year, description, genres, directors, actors } = body;
-    if (!name || !year || !description || 
-        !Array.isArray(genres) || 
-        !Array.isArray(directors) || 
-        !Array.isArray(actors)) {
-        return res.status(400).send({
-            error: "One or multiple parameters are missing or invalid"
-        });
+    const { name, year, description, genres, actors, directors } = req.body;
+
+    if (!name || !year || !description) {
+        return res.status(400).send({ error: "Missing required fields: name, year, description" });
     }
 
-    const newMovie = {
-        movieID: movies.length + 1,
-        ...body, // All properties from the "body" object (name, description, year...)
+    try {
+        const movie = await db.Movie.create({ name, year, description });
+
+        if (genres && Array.isArray(genres)) {
+            for (const genre of genres) {
+                const [genreRecord] = await db.Genre.findOrCreate({ where: { title: genre.title } });
+                await movie.addGenre(genreRecord);
+            }
+        }
+
+        if (actors && Array.isArray(actors)) {
+            for (const actor of actors) {
+                const [actorRecord] = await db.Actor.findOrCreate({ where: { name: actor.name } });
+                await movie.addActor(actorRecord);
+            }
+        }
+
+        if (directors && Array.isArray(directors)) {
+            for (const director of directors) {
+                const [directorRecord] = await db.Director.findOrCreate({ where: { name: director.name } });
+                await movie.addDirector(directorRecord);
+            }
+        }
+
+        const createdMovie = await db.Movie.findByPk(movie.movieID, {
+            include: [
+                { model: db.Genre, through: { attributes: [] } },
+                { model: db.Actor, through: { attributes: [] } },
+                { model: db.Director, through: { attributes: [] } },
+            ],
+        });
+
+        res.status(201).send(createdMovie);
+    } catch (error) {
+        console.error("Error creating movie:", error);
+        res.status(500).send({ error: "Failed to create movie" });
     }
-    
-    const createdMovie = await db.movies.create(newMovie);
-    const link = `${Utils.getBaseUrl(req)}/movies/${createdMovie.movieID}`;
-    res.status(201).location(link).send(createdMovie);
-}
+};
 
 exports.editById = async (req, res) => {
     const movie = await getMovie(req, res);
