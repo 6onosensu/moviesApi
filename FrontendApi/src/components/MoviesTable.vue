@@ -8,9 +8,9 @@ export default {
 </script>
 
 <template>
-  <div>
-    <table class="table table-striped table-bordered">
-      <thead class="table-dark">
+  <div class="movies-table-container">
+    <table class="movies-table">
+      <thead>
         <tr>
           <th>Movie Name</th>
           <th>Description</th>
@@ -24,7 +24,7 @@ export default {
           <td>{{ item.description }}</td>
           <td>{{ item.year }}</td>
           <td>
-            <router-link :to="`/movies/${item.movieID}`" class="btn btn-primary">
+            <router-link :to="`/movies/${item.movieID}`" class="btn">
               View Details
             </router-link>
           </td>
@@ -35,4 +35,52 @@ export default {
 </template>
 
 <style scoped>
+.movies-table-container {
+  margin: 20px 0;
+  overflow-x: auto; 
+}
+
+.movies-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: Arial, sans-serif;
+  background-color: #f9f9f9; 
+  border: 1px solid #ddd; 
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.movies-table th,
+.movies-table td {
+  padding: 12px 15px;
+  text-align: left;
+  border: 1px solid #ddd;
+}
+
+.movies-table th {
+  background-color: #007bff;
+  color: white; 
+  font-weight: bold;
+}
+
+.movies-table tbody tr:nth-child(even) {
+  background-color: #f2f2f2;
+}
+
+.movies-table tbody tr:hover {
+  background-color: #e9ecef;
+}
+
+.btn {
+  padding: 8px 12px;
+  background-color: #007bff;
+  color: white;
+  text-decoration: none;
+  border-radius: 4px;
+  font-size: 14px;
+  transition: background-color 0.3s ease-in-out;
+}
+
+.btn:hover {
+  background-color: #0056b3;
+}
 </style>

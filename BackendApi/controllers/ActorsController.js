@@ -1,16 +1,10 @@
 const { db } = require('../db');
 const Utils = require('./utils');
 
-const actors = [
-    { actorID: 1, name: "Daniel Radcliffe" },
-    { actorID: 2, name: "Emma Watson" },
-    { actorID: 3, name: "Rupert Grint" },
-];
-
 exports.getAll = async (req, res) => {
     try {
-        const actors = await db.actors.findAll();
-        res.status(200).send(actors.map(({id, name}) => {return {id, name}}));
+        const actors = await db.Actor.findAll();
+        res.status(200).send(actors.map(({actorID, name}) => {return {actorID, name}}));
     } catch (error) {
         res.status(500).send({ error: "Failed to retrieve actors" });
     }
@@ -73,7 +67,7 @@ const getActor = async (req, res) => {
         res.status(400).send({Error: `ID must be a whole number: ${id}`});
         return null;
     }
-    const actor = await db.actors.findByPk(id);
+    const actor = await db.Actor.findByPk(id);
     if (!actor) {
         res.status(404).send({Error: `Actor with this ID not found: ${id}`});
         return null;

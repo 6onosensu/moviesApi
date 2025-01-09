@@ -34,12 +34,12 @@ a:hover {
 @media (min-width: 1024px) {
   body {
     display: flex;
-    justify-content: flex-start; /* Align content to the top left */
+    justify-content: flex-start;
     align-items: flex-start;
   }
 
   #app {
-    display: block; /* Ensure a simple vertical flow */
+    display: block;
     padding: 0 2rem;
   }
 }

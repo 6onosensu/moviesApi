@@ -1,19 +1,14 @@
 const {db} = require('../db');
 const Utils = require('./utils');
 
-const genres = [
-    { genreID: 1, title: "Adventure" },
-    { genreID: 2, title: "Fantasy" },
-    { genreID: 3, title: "Family" },
-    { genreID: 4, title: "Mystery" },
-    { genreID: 5, title: "Thriller" },
-    { genreID: 6, title: "Drama" },
-    { genreID: 7, title: "Action" },
-    { genreID: 8, title: "Romance" },
-];
 
-exports.getAllGenres = (req, res) => {
-    res.send(genres);
+exports.getAllGenres = async (req, res) => {
+    try {
+        const data = await db.Genre.findAll();
+        res.status(200).send(data.map(({genreID, title}) => {return {genreID, title}}));
+    } catch (error) {
+        res.status(500).send({ error: "Failed to retrieve genres" });
+    }
 };
 
 exports.getGenreById = async (req, res) => {

@@ -1,3 +1,10 @@
+<template>
+  <div class="container">
+    <router-link to="/AddMovie" class="btn">Add Movie</router-link>
+    <MoviesTable items="allMovies" />
+  </div>
+</template>
+
 <script>
 import MoviesTable from '../components/MoviesTable.vue';
 export default {
@@ -14,12 +21,24 @@ export default {
 };
 </script>
 
-<template>
-    <main>
-        <router-link to="/add-movie" class="btn btn-primary">Add Movie</router-link>
-        <div v-if="allMovies.length === 0">Loading movies...</div>
-        <MoviesTable v-else :items="allMovies" />
-    </main>
-</template>
+<style scoped>
+.container {
+    max-width: 1200px;
+    margin: 0 auto; 
+    padding: 20px;
+}
 
-<style scoped></style>
+.btn {
+  margin-top: 20px;
+  padding: 5px 10px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.btn:hover {
+  background-color: #0056b3;
+}
+</style>
