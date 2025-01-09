@@ -1,66 +1,128 @@
 <template>
-  <div>
+  <div class="add-movie-form">
     <h1>Add a New Movie</h1>
-    <AddMovie
-      :name="movie.name"
-      :description="movie.description"
-      :year="movie.year"
-      :genres="movie.genres"
-      :directors="movie.directors"
-      :actors="movie.actors"
-      @submit="submitMovie"
-    />
+    <div class="form-group">
+      <label for="name">Name:</label>
+      <input v-model="movie.name" id="name" type="text" placeholder="Enter movie name" />
+    </div>
+
+    <div class="form-group">
+      <label for="description">Description:</label>
+      <textarea v-model="movie.description" id="description" placeholder="Enter movie description"></textarea>
+    </div>
+
+    <div class="form-group">
+      <label for="year">Year:</label>
+      <input v-model="movie.year" id="year" type="number" placeholder="Enter release year" />
+    </div>
+
+    <div class="form-group">
+      <label for="genres">Genres:</label>
+      <select v-model="selectedGenre" id="genres">
+        <option v-for="genre in genres" :key="genre.genreID" :value="genre">
+          {{ genre.title }}
+        </option>
+      </select>
+      <button @click="addGenre">Add Genre</button>
+      <ul>
+        <li v-for="genre in movie.genres" :key="genre.genreID">
+          {{ genre.title }}
+        </li>
+      </ul>
+    </div>
+
+    <div class="form-group">
+      <label for="actors">Actors:</label>
+      <input v-model="actorName" id="actors" type="text" placeholder="Enter actor name" />
+      <button @click="addActor">Add Actor</button>
+      <ul>
+        <li v-for="actor in movie.actors" :key="actor.actorID">
+          {{ actor.name }}
+        </li>
+      </ul>
+    </div>
+
+    <div class="form-group">
+      <label for="directors">Directors:</label>
+      <input v-model="directorName" id="directors" type="text" placeholder="Enter director name" />
+      <button @click="addDirector">Add Director</button>
+      <ul>
+        <li v-for="director in movie.directors" :key="director.directorID">
+          {{ director.name }}
+        </li>
+      </ul>
+    </div>
+
+    <button @click="submitMovie">Submit</button>
   </div>
 </template>
 
 <script>
-import AddMovie from '../components/movie/AddMovie.js';
-
 export default {
-  name: 'AddMovieView',
-  components: {
-    AddMovie,
-  },
+  name: "AddMovie",
   data() {
     return {
       movie: {
-        name: '',
-        description: '',
-        year: '',
-        genres: '',
-        directors: '',
-        actors: '',
+        name: "",
+        description: "",
+        year: null,
+        genres: [],
+        actors: [],
+        directors: [],
       },
+      genres: [],
+      selectedGenre: null, 
+      actorName: "",
+      directorName: "", 
     };
   },
+  async created() {
+    await this.fetchGenres();
+  },
   methods: {
+    async fetchGenres() {
+      try {
+        const response = await fetch("http://localhost:8080/genres");
+        const data = await response.json();
+        this.genres = data;
+      } catch (error) {
+        console.error("Error fetching genres:", error);
+      }
+    },
+    addGenre() {
+      if (this.selectedGenre && !this.movie.genres.includes(this.selectedGenre)) {
+        this.movie.genres.push(this.selectedGenre);
+      }
+    },
+    addActor() {
+      if (this.actorName.trim()) {
+        this.movie.actors.push({ name: this.actorName.trim() });
+        this.actorName = "";
+      }
+    },
+    addDirector() {
+      if (this.directorName.trim()) {
+        this.movie.directors.push({ name: this.directorName.trim() });
+        this.directorName = "";
+      }
+    },
     async submitMovie() {
       try {
-        const response = await fetch('http://localhost:8080/movies', {
-          method: 'POST',
+        const response = await fetch("http://localhost:8080/movies", {
+          method: "POST",
           headers: {
-            'Content-Type': 'application/json',
+            "Content-Type": "application/json",
           },
-          body: JSON.stringify({
-            name: this.movie.name,
-            description: this.movie.description,
-            year: this.movie.year,
-            genres: this.movie.genres.split(',').map((g) => g.trim()),
-            directors: this.movie.directors.split(',').map((d) => d.trim()),
-            actors: this.movie.actors.split(',').map((a) => a.trim()),
-          }),
+          body: JSON.stringify(this.movie),
         });
-
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
-
         const data = await response.json();
-        console.log('Movie added successfully:', data);
-
-        this.$router.push('/movies');
+        console.log("Movie added successfully:", data);
+        this.$router.push("/movies");
       } catch (error) {
-        console.error('Error adding movie:', error);
+        console.error("Error submitting movie:", error);
       }
     },
   },
@@ -68,13 +130,32 @@ export default {
 </script>
 
 <style scoped>
-h1 {
+.add-movie-form {
+  font-family: Arial, sans-serif;
+  margin: 20px;
+}
+
+.form-group {
   margin-bottom: 20px;
 }
 
-.btn {
-  margin-top: 40px;
-  padding: 5px 10px;
+label {
+  font-weight: bold;
+}
+
+input,
+textarea,
+select {
+  display: block;
+  width: 100%;
+  margin-top: 5px;
+  padding: 10px;
+  font-size: 14px;
+}
+
+button {
+  margin-top: 10px;
+  padding: 10px 20px;
   background-color: #007bff;
   color: white;
   border: none;
@@ -82,7 +163,17 @@ h1 {
   cursor: pointer;
 }
 
-.btn:hover {
+button:hover {
   background-color: #0056b3;
+}
+
+ul {
+  margin-top: 10px;
+  list-style-type: none;
+  padding: 0;
+}
+
+li {
+  margin: 5px 0;
 }
 </style>
