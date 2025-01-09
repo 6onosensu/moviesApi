@@ -14,7 +14,7 @@ exports.getAllGenres = async (req, res) => {
 exports.getGenreById = async (req, res) => {
     const genre = await getGenre(req, res);
     if (!genre) return;
-    res.send(genre);
+    res.status(200).send(genre);
 };
 
 const getGenre = async (req, res) => {
@@ -24,13 +24,13 @@ const getGenre = async (req, res) => {
         return null;
     }
 
-    const genre = genres.find((g) => g.genreID === id);
+    const genre = await db.Genre.findByPk(id);
     if (!genre) {
         res.status(404).send({ error: `Genre with ID ${id} not found` });
         return null;
     }
 
-    res.send(genre);
+    return genre;
 };
 
 exports.updateGenre = async (req, res) => {
@@ -43,6 +43,7 @@ exports.updateGenre = async (req, res) => {
     }
 
     genre.title = title;
+    await genre.save();
     const link = `${req.protocol}://${req.get("host")}/genres/${genre.genreID}`;
     res.status(200).location(link).send(genre);
 };
@@ -70,19 +71,3 @@ exports.deleteGenre = async (req, res) => {
     await genre.destroy();
     res.status(204).send({Error: 'No Content'});
 };
-
-/**
-function getGenre(req, res) {
-    const id = parseInt(req.params.genreID);
-    if (isNaN(id)) {
-        res.status(400).send({Error: `genreID not found`});
-        return null;
-    }
-    const genre = genres.find( genre => genre.genreID === id)
-    if (!genre) {
-        res.status(404).send({Error: `Genre not found`});
-        return null;
-    }
-    return genre;
-}
- */

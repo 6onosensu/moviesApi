@@ -18,12 +18,62 @@ exports.getAll = async (req, res) => {
 };
 
 exports.getById = async (req, res) => {
-    const movie = await getMovie(req, res);
-    if (!movie) { 
-        return res.status(404).send({Error: 'Movie not found'});
+    try {
+        const movieID = parseInt(req.params.movieID);
+        if (isNaN(movieID)) {
+            return res.status(400).send({ error: "Invalid movie ID" });
+        }
+
+        const movie = await db.Movie.findByPk(movieID, {
+            include: [
+                {
+                    model: db.Genre,
+                    through: { attributes: [] }, 
+                    attributes: ['genreID', 'title'],
+                },
+                {
+                    model: db.Actor,
+                    through: { attributes: [] },
+                    attributes: ['actorID', 'name'],
+                },
+                {
+                    model: db.Director,
+                    through: { attributes: [] },
+                    attributes: ['directorID', 'name'],
+                },
+            ],
+        });
+
+        if (!movie) {
+            return res.status(404).send({ error: "Movie not found" });
+        }
+
+        const formattedMovie = {
+            movieID: movie.movieID,
+            name: movie.name,
+            description: movie.description,
+            year: movie.year,
+            genres: movie.Genres.map(genre => ({
+                genreID: genre.genreID,
+                title: genre.title,
+            })),
+            actors: movie.Actors.map(actor => ({
+                actorID: actor.actorID,
+                name: actor.name, 
+            })),
+            directors: movie.Directors.map(director => ({
+                directorID: director.directorID,
+                name: director.name,
+            })),
+        };
+
+        res.status(200).send(formattedMovie);
+    } catch (error) {
+        console.error("Error fetching movie by ID:", error);
+        res.status(500).send({ error: "Failed to fetch movie details" });
     }
-    res.send(movie);
-}
+};
+
 
 exports.create = async (req, res) => {
     const { body } = req;
