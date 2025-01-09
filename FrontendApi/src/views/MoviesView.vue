@@ -1,12 +1,13 @@
 <template>
   <div class="container">
-    <router-link to="/AddMovie" class="btn">Add Movie</router-link>
-    <MoviesTable items="allMovies" />
+    <router-link to="/add-movie" class="btn">Add Movie</router-link>
+    <MoviesTable :items="allMovies" />
   </div>
 </template>
 
 <script>
 import MoviesTable from '../components/MoviesTable.vue';
+
 export default {
   name: "MoviesView",
   components: { MoviesTable },
@@ -16,7 +17,16 @@ export default {
     };
   },
   async created() {
-    this.allMovies = await (await fetch('http://localhost:8080/movies')).json();
+    try {
+      const response = await fetch('http://localhost:8080/movies');
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      this.allMovies = await response.json();
+      console.log('Movies fetched:', this.allMovies);
+    } catch (error) {
+        console.error('Error fetching movies:', error);
+    }
   },
 };
 </script>
