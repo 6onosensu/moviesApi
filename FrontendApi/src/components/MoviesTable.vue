@@ -27,7 +27,7 @@ export default {
             <router-link :to="`/movies/${item.movieID}`" class="btn">
               Details
             </router-link>
-            <router-link :to="`/movies/${item.movieID}/edit`" class="btn">
+            <router-link :to="`/movies/UpdateMovie/${item.movieID}`" class="btn">
               Update
             </router-link>
             <router-link :to="`/movies/${item.movieID}/delete`" class="btn">

@@ -21,11 +21,11 @@ export default {
       </tr>
       <tr>
         <th>Directors</th>
-        <td>{{ movieInModal.directors.map(director => director.firstName + ' ' + director.lastName).join(', ') }}</td>
+        <td>{{ movieInModal.directors.map(director => director.name).join(', ') }}</td>
       </tr>
       <tr>
         <th>Actors</th>
-        <td>{{ movieInModal.actors.map(actor => actor.firstName + ' ' + actor.lastName).join(', ') }}</td>
+        <td>{{ movieInModal.actors.map(actor => actor.name).join(', ') }}</td>
       </tr>
     </table>
   `,
