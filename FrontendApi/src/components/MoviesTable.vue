@@ -4,6 +4,25 @@ export default {
   props: {
     items: Array,
   },
+  methods: {
+    async deleteMovie(movieID) {
+      const confirmation = confirm("Are you sure you want to delete this movie?");
+      if (!confirmation) return;
+
+      try {
+        const response = await fetch(`http://localhost:8080/movies/${movieID}`, {
+          method: "DELETE",
+        });
+        if (!response.ok) {
+          throw new Error(`Failed to delete movie. Status: ${response.status}`);
+        }
+        this.$emit("movieDeleted", movieID);
+      } catch (error) {
+        console.error("Error deleting movie:", error);
+        alert("Failed to delete the movie. Please try again.");
+      }
+    },
+  },
 };
 </script>
 
@@ -30,9 +49,9 @@ export default {
             <router-link :to="`/movies/UpdateMovie/${item.movieID}`" class="btn">
               Update
             </router-link>
-            <router-link :to="`/movies/${item.movieID}/delete`" class="btn">
+            <button @click="deleteMovie(item.movieID)" class="btn">
               Delete
-            </router-link>
+            </button>
           </td>
         </tr>
       </tbody>

@@ -1,7 +1,7 @@
 <template>
   <div class="container">
     <router-link to="/add-movie" class="btn">Add Movie</router-link>
-    <MoviesTable :items="allMovies" />
+    <MoviesTable :items="allMovies" @movieDeleted="refreshMovies" />
   </div>
 </template>
 
@@ -17,16 +17,24 @@ export default {
     };
   },
   async created() {
-    try {
-      const response = await fetch('http://localhost:8080/movies');
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-      this.allMovies = await response.json();
-      console.log('Movies fetched:', this.allMovies);
-    } catch (error) {
+    await this.fetchMovies();
+  },
+  methods: {
+    async fetchMovies() {
+      try {
+        const response = await fetch('http://localhost:8080/movies');
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        this.allMovies = await response.json();
+        console.log('Movies fetched:', this.allMovies);
+      } catch (error) {
         console.error('Error fetching movies:', error);
-    }
+      }
+    },
+    refreshMovies(deletedMovieID) {
+      this.allMovies = this.allMovies.filter(movie => movie.movieID !== deletedMovieID);
+    },
   },
 };
 </script>
