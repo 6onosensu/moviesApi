@@ -64,6 +64,7 @@
 
     <button class="submitBtn" @click="submitMovie">Submit</button>
   </div>
+  <router-link to="/movies">Back to Movies</router-link>
 </template>
 
 <script>

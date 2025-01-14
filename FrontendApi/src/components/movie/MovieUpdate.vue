@@ -64,6 +64,7 @@
         </div>
     
         <button class="submitBtn" @click="submitMovie">Submit</button>
+        <router-link to="/movies">Back to Movies</router-link>
     </div>
     <div v-else>
       <p>Loading movie data...</p>
