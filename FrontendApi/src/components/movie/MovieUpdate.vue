@@ -1,20 +1,20 @@
 
 <template>
-    <div class="update-movie-form">
+    <div v-if="movieLoaded" class="update-movie-form">
         <h1>Update the Movie</h1>
         <div class="form-group">
             <label for="name">Name:</label>
-            <input v-model="movie.name" id="nameToUpdate" type="text" value="{{ movieInModal.movieID }}" />
+            <input v-model="movie.name" id="nameToUpdate" type="text"/>
         </div>
     
         <div class="form-group">
             <label for="description">Description:</label>
-            <textarea v-model="movie.description" id="descriptionToUpdate" value="{{ movieInModal.description }}"></textarea>
+            <textarea v-model="movie.description" id="descriptionToUpdate"></textarea>
         </div>
     
         <div class="form-group">
             <label for="year">Year:</label>
-            <input v-model="movie.year" id="yearToUpdate" type="number" value="{{ movieInModal.year }}"/>
+            <input v-model="movie.year" id="yearToUpdate" type="number"/>
         </div>
     
         <div class="form-group">
@@ -56,43 +56,51 @@
     
         <button class="submitBtn" @click="submitMovie">Submit</button>
     </div>
+    <div v-else>
+      <p>Loading movie data...</p>
+    </div>
   </template>
  
 <script>
-import UpdateMovieTable from './UpdateMovie.js';
+import MovieAPI from './MovieUpdate.js';
 
 export default {
   name: "UpdateMovie",
-  components: {
-        UpdateMovieTable,
-    },
   data() {
     return {
       movie: {
+        name: "",
+        description: "",
+        year: null,
         genres: [],
         actors: [],
         directors: [],
       },
-      movieLoaded: false, 
+      genres: [],
+      selectedGenre: null,
+      actorName: "",
+      directorName: "",
+      movieLoaded: false,
     };
   },
   async created() {
-    await this.fetchGenres();
+    const movieID = this.$route.params.movieID;
+    try {
+      const [movieDetails, genres] = await Promise.all([
+        MovieAPI.fetchMovieDetails(movieID),
+        MovieAPI.fetchGenres(),
+      ]);
+      this.movie = {
+        ...this.movie,
+        ...movieDetails,
+      };
+      this.genres = genres;
+      this.movieLoaded = true;
+    } catch (error) {
+      console.error("Error loading movie data:", error);
+    }
   },
   methods: {
-    async fetchGenres() {
-        const movieID = this.$route.params.movieID;
-        try {
-            const response = await fetch(`http://localhost:8080/movies/${movieID}`);
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-            const data = await response.json();
-            this.movie = data;
-        } catch (error) {
-            console.error("Error fetching genres:", error);
-        }
-    },
     addGenre() {
       if (this.selectedGenre && !this.movie.genres.includes(this.selectedGenre)) {
         this.movie.genres.push(this.selectedGenre);
@@ -111,26 +119,18 @@ export default {
       }
     },
     async submitMovie() {
+      const movieID = this.$route.params.movieID;
       try {
-        const response = await fetch("http://localhost:8080/movies/:movieID", {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(this.movie),
-        });
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        const data = await response.json();
-        console.log("Movie UPDATED successfully:", data);
-        this.$router.put("/movies/:movieID");
+        const updatedMovie = await MovieAPI.updateMovie(movieID, this.movie);
+        console.log("Movie UPDATED successfully:", updatedMovie);
+        this.$router.push("/movies");
       } catch (error) {
         console.error("Error submitting movie:", error);
       }
     },
   },
 };
+
 </script>
 
   <style scoped>
