@@ -26,9 +26,12 @@
             </select>
             <button @click="addGenre">Add Genre</button>
             <ul>
-            <li v-for="genre in movie.genres" :key="genre.genreID">
-                {{ genre.title }}
-            </li>
+              <li v-for="(genre, index) in movie.genres" :key="index">
+                <div class="in-row">
+                  <span>{{ genre.title }}</span>
+                  <button @click="deleteGenre(index)" class="delete-btn">x</button>
+                </div>
+              </li>
             </ul>
         </div>
     
@@ -123,6 +126,9 @@ export default {
     },
     deleteActor(actorID) {
       this.movie.actors.splice(actorID, 1);
+    },
+    deleteGenre(id) {
+      this.movie.genres.splice(id, 1);
     },
     async submitMovie() {
       const movieID = this.$route.params.movieID;
