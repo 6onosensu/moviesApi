@@ -124,6 +124,9 @@ export default {
     deleteDirector(id) {
       this.movie.directors.splice(id, 1);
     },
+    deleteGenre(id) {
+      this.movie.genres.splice(id, 1);
+    },
     async submitMovie() {
       try {
         const response = await fetch("http://localhost:8080/movies", {
