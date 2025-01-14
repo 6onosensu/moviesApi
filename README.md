@@ -3,7 +3,8 @@
 ## How to run:
 1. Open a terminal
 2. Start the server with: 
-   ```npm start
+   ```bash
+   npm start
 3. The project is now running
 
 <h1>Backend</h1>
