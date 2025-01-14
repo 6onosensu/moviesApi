@@ -37,9 +37,12 @@
             <input v-model="actorName" id="actorsToUpdate" type="text" placeholder="Enter actor name" />
             <button @click="addActor">Add Actor</button>
             <ul>
-            <li v-for="actor in movie.actors" :key="actor.actorID">
-                {{ actor.name }}
-            </li>
+              <li v-for="(actor, index) in movie.actors" :key="index">
+                <div class="in-row">
+                  <span>{{ actor.name }}</span>
+                  <button @click="deleteActor(index)" class="delete-btn">x</button>
+                </div>
+              </li>
             </ul>
         </div>
     
@@ -118,6 +121,9 @@ export default {
         this.directorName = "";
       }
     },
+    deleteActor(actorID) {
+      this.movie.actors.splice(actorID, 1);
+    },
     async submitMovie() {
       const movieID = this.$route.params.movieID;
       try {
@@ -191,13 +197,54 @@ export default {
   }
   
   ul {
-    margin-top: 10px;
-    list-style-type: none;
-    padding: 0;
-  }
-  
-  li {
-    margin: 5px 0;
-  }
+  margin-top: 10px;
+  list-style-type: none;
+  padding: 0;
+}
+
+li {
+  margin: 0;
+  padding: 0;
+}
+
+.in-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border: 1px solid #ddd;
+  padding: 2px 10px;
+  width: 100%;
+  border-radius: 4px;
+  box-sizing: border-box;
+  height: 40px;
+}
+
+.in-row span {
+  flex-grow: 1; 
+  text-align: left; 
+}
+
+.in-row:hover {
+  background-color: #f1f1f1;
+}
+
+.delete-btn {
+  background-color: red;
+  text-decoration: none;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  align-items: center;
+  justify-content: center;
+  display: flex;
+  cursor: pointer;
+  padding: 2px 10px;
+  font-size: 12px;
+}
+
+.delete-btn:hover {
+  background-color: darkred;
+  color: white;
+}
   </style>
   
