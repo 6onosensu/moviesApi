@@ -6,17 +6,21 @@
 
       <h3>Genres:</h3>
       <ul>
-          <li v-for="genre in movie.genres" :key="genre.genreID">{{ genre.title }}</li>
+          <li><div v-for="genre in movie.genres" :key="genre.genreID" class="items-in-row">{{ genre.title }}, </div></li>
       </ul>
 
       <h3>Actors:</h3>
       <ul>
-          <li v-for="actor in movie.actors" :key="actor.actorID">{{ actor.name }}</li>
+          <li>
+            <div v-for="actor in movie.actors" :key="actor.actorID" class="items-in-row">{{ actor.name }}, </div>
+          </li>
       </ul>
 
       <h3>Directors:</h3>
       <ul>
-          <li v-for="director in movie.directors" :key="director.directorID">{{ director.name }}</li>
+          <li>
+            <div v-for="director in movie.directors" :key="director.directorID" class="items-in-row">{{ director.name }}, </div>
+          </li>
       </ul>
 
       <router-link to="/movies">Back to Movies</router-link>
@@ -98,5 +102,9 @@
 
     .movie-details a:hover {
     text-decoration: underline;
+    }
+
+    .items-in-row {
+      display: inline;
     }
 </style>
