@@ -24,7 +24,7 @@
 - [Trello Board](https://trello.com/b/13fXA5nM/team-project-hajusrakenduste-alused)
 - [Apicur](https://studio.apicur.io/apis/112948)
 - [The Entity Relationship Diagram (ERD)](https://lucid.app/lucidchart/7f13e061-d383-43ff-8cba-ecbf44fd649c/edit?viewport_loc=-222%2C-521%2C2101%2C1668%2C0_0&invitationId=inv_1166ddfc-b7db-4ea7-8359-4f588188d567)
-![erd](https://github.com/user-attachments/assets/ad0ebb11-29dd-40dd-aaf1-7059787b8154)
+![erd](https://github.com/user-attachments/assets/80f97e23-f143-44fc-b494-b363949311ce)
 
 ----------------------------------
 <h1>Frontend</h1>
